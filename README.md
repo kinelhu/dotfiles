@@ -27,7 +27,7 @@ My personal terminal configuration for macOS, featuring iTerm2, oh-my-zsh, and c
 Clone this repository and run the install script:
 
 ```bash
-git clone --recursive https://github.com/YOUR_USERNAME/dotfiles.git ~/.dotfiles
+git clone --recursive https://github.com/kinelhu/dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
 ./install.sh
 ```
@@ -44,7 +44,7 @@ If you prefer manual setup:
 
 1. **Clone the repository with submodules:**
    ```bash
-   git clone --recursive https://github.com/YOUR_USERNAME/dotfiles.git ~/.dotfiles
+   git clone --recursive https://github.com/kinelhu/dotfiles.git ~/.dotfiles
    ```
 
 2. **Initialize submodules (if not cloned with --recursive):**
