@@ -1,0 +1,23 @@
+% Study document styling
+\usepackage{fontspec}
+\usepackage[margin=2cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage{titlesec}
+\usepackage{xcolor}
+
+% Set Atkinson Hyperlegible font if available
+\IfFontExistsTF{Atkinson Hyperlegible}{\setmainfont{Atkinson Hyperlegible}}{}
+
+% Section formatting
+\titleformat{\section}{\large\bfseries\color{blue!60!black}}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries\color{teal}}{\thesubsection}{1em}{}
+
+% Reduce spacing
+\titlespacing*{\section}{0pt}{8pt}{4pt}
+\titlespacing*{\subsection}{0pt}{6pt}{3pt}
+
+% List formatting
+\setlist{noitemsep,topsep=2pt}
