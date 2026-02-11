@@ -91,7 +91,31 @@ Then restart iTerm2.
 
 ## Updating
 
-### Update all plugins
+### Syncing Configuration Changes
+
+After editing any config files (`.zshrc`, `.tmux.conf`, etc.), use the sync script:
+
+```bash
+cd ~/.dotfiles
+./sync.sh
+```
+
+Or manually:
+```bash
+cd ~/.dotfiles
+git add .
+git commit -m "Update configuration"
+git push
+```
+
+On other machines, pull the changes:
+```bash
+cd ~/.dotfiles
+git pull
+source ~/.zshrc  # Reload shell if .zshrc changed
+```
+
+### Update Plugins to Latest Versions
 ```bash
 cd ~/.dotfiles
 git submodule update --remote --merge
@@ -100,7 +124,7 @@ git commit -m "Update plugins"
 git push
 ```
 
-### Pull latest changes
+### Pull Latest Changes from Remote
 ```bash
 cd ~/.dotfiles
 git pull
@@ -123,7 +147,9 @@ git submodule update --init --recursive
 ```
 ~/.dotfiles/
 ├── README.md                    # This file
-├── install.sh                   # Bootstrap script
+├── CLAUDE.md                    # Development guide (for Claude or contributors)
+├── install.sh                   # Bootstrap script for new machines
+├── sync.sh                      # Helper script to commit and push changes
 ├── .zshrc                       # Main zsh configuration
 ├── .tmux.conf                   # tmux configuration
 ├── iterm2/
@@ -142,15 +168,29 @@ git submodule update --init --recursive
 
 ## Customization
 
-- Edit `~/.dotfiles/.zshrc` for shell configuration
-- Edit `~/.dotfiles/.tmux.conf` for tmux settings
-- After making changes, commit and push:
-  ```bash
-  cd ~/.dotfiles
-  git add .
-  git commit -m "Update configuration"
-  git push
-  ```
+### How Symlinks Work
+
+The install script creates **symlinks**, meaning:
+- `~/.zshrc` → `~/.dotfiles/.zshrc`
+- When you edit `~/.zshrc`, you're editing the file in the git repo
+- No need to copy files back - they're the same file!
+
+### Making Changes
+
+1. Edit config files normally (e.g., `vim ~/.zshrc`)
+2. Sync to git:
+   ```bash
+   cd ~/.dotfiles
+   ./sync.sh  # Interactive helper
+   ```
+
+### Adding New Config Files
+
+See `CLAUDE.md` for detailed instructions on:
+- Adding new configuration files
+- Adding new zsh plugins
+- Updating iTerm2 preferences
+- And more development workflows
 
 ## Troubleshooting
 
