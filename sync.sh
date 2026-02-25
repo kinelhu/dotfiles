@@ -12,7 +12,28 @@ DOTFILES_DIR="$HOME/.dotfiles"
 
 cd "$DOTFILES_DIR"
 
-echo -e "${BLUE}🔄 Syncing dotfiles...${NC}"
+echo -e "${BLUE}🔄 Capturing latest app state...${NC}"
+
+# Brewfile
+if command -v brew &>/dev/null; then
+    brew bundle dump --file="$DOTFILES_DIR/Brewfile" --force --quiet
+    echo -e "${GREEN}✓ Brewfile updated${NC}"
+fi
+
+# VS Code extensions
+if command -v code &>/dev/null; then
+    code --list-extensions > "$DOTFILES_DIR/vscode/extensions.txt"
+    echo -e "${GREEN}✓ VS Code extensions updated${NC}"
+fi
+
+# iTerm2 preferences (only if iTerm2 is installed)
+if defaults read com.googlecode.iterm2 &>/dev/null 2>&1; then
+    defaults read com.googlecode.iterm2 > "$DOTFILES_DIR/iterm2/profile.plist"
+    cp ~/Library/Preferences/com.googlecode.iterm2.plist "$DOTFILES_DIR/iterm2/com.googlecode.iterm2.plist"
+    echo -e "${GREEN}✓ iTerm2 preferences updated${NC}"
+fi
+
+echo ""
 
 # Check if there are any changes
 if [[ -n $(git status -s) ]]; then
@@ -20,30 +41,22 @@ if [[ -n $(git status -s) ]]; then
     git status -s
     echo ""
 
-    # Show diff
-    echo -e "${YELLOW}📋 Diff:${NC}"
-    git diff --stat
-    echo ""
-
-    # Add all changes
     git add .
 
-    # Prompt for commit message
     echo -e "${GREEN}Enter commit message (or press Enter for default):${NC}"
     read -r commit_msg
 
     if [[ -z "$commit_msg" ]]; then
-        commit_msg="Update dotfiles configuration"
+        commit_msg="Update dotfiles — $(date '+%Y-%m-%d')"
     fi
 
-    # Commit
     git commit -m "$commit_msg"
     echo -e "${GREEN}✓ Changes committed${NC}"
 else
     echo -e "${GREEN}✓ No changes to commit${NC}"
 fi
 
-# Check if we're ahead of remote
+# Push if ahead of remote
 if [[ -n $(git log @{u}.. 2>/dev/null) ]]; then
     echo -e "${BLUE}📤 Pushing to remote...${NC}"
     git push
@@ -53,14 +66,10 @@ else
 fi
 
 # Check for remote updates
-echo -e "${BLUE}📥 Checking for remote updates...${NC}"
-git fetch
-
+git fetch --quiet
 if [[ -n $(git log ..@{u} 2>/dev/null) ]]; then
     echo -e "${YELLOW}⚠ Remote has updates. Run 'git pull' to sync.${NC}"
-else
-    echo -e "${GREEN}✓ No remote updates${NC}"
 fi
 
 echo ""
-echo -e "${GREEN}✅ Sync complete!${NC}"
+echo -e "${GREEN}✅ Done!${NC}"
