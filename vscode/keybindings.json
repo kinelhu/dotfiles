@@ -1,0 +1,9 @@
+// Place your key bindings in this file to override the defaults
+[
+    {
+        "key": "Cmd+Shift+m",
+        "command": "type",
+        "args": { "text": "%>%" },
+        "when": "(editorTextFocus | terminalFocus) && editorLangId == r"
+    }
+]

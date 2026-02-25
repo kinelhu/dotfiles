@@ -66,6 +66,21 @@ else
     echo -e "${YELLOW}Alfred not found — skipping Alfred preferences link${NC}"
 fi
 
+# VS Code settings
+if [ -d "$HOME/Library/Application Support/Code/User" ]; then
+    create_symlink "$DOTFILES_DIR/vscode/settings.json" "$HOME/Library/Application Support/Code/User/settings.json"
+    create_symlink "$DOTFILES_DIR/vscode/keybindings.json" "$HOME/Library/Application Support/Code/User/keybindings.json"
+else
+    echo -e "${YELLOW}VS Code not found — skipping VS Code settings link${NC}"
+fi
+
+# Positron settings
+if [ -d "$HOME/Library/Application Support/Positron/User" ]; then
+    create_symlink "$DOTFILES_DIR/positron/settings.json" "$HOME/Library/Application Support/Positron/User/settings.json"
+else
+    echo -e "${YELLOW}Positron not found — skipping Positron settings link${NC}"
+fi
+
 # Create symlinks for oh-my-zsh custom plugins and themes
 echo "🔌 Linking oh-my-zsh custom plugins and themes..."
 create_symlink "$DOTFILES_DIR/oh-my-zsh-custom/plugins/zsh-autosuggestions" "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
@@ -97,7 +112,32 @@ else
     echo -e "${GREEN}✓ tmux installed${NC}"
 fi
 
-# iTerm2 profile import instructions
+# Homebrew packages
+echo ""
+echo "🍺 Homebrew packages..."
+if command -v brew &> /dev/null; then
+    if [ -f "$DOTFILES_DIR/Brewfile" ]; then
+        echo "Installing packages from Brewfile (this may take a while)..."
+        brew bundle install --file="$DOTFILES_DIR/Brewfile"
+        echo -e "${GREEN}✓ Homebrew packages installed${NC}"
+    fi
+else
+    echo -e "${YELLOW}Homebrew not found. Install it first:${NC}"
+    echo '  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+    echo "  Then re-run this script."
+fi
+
+# VS Code extensions
+echo ""
+if command -v code &> /dev/null && [ -f "$DOTFILES_DIR/vscode/extensions.txt" ]; then
+    echo "📦 Installing VS Code extensions..."
+    while IFS= read -r ext; do
+        code --install-extension "$ext" --force &>/dev/null && echo -e "${GREEN}✓ $ext${NC}" || echo -e "${YELLOW}⚠ $ext (failed)${NC}"
+    done < "$DOTFILES_DIR/vscode/extensions.txt"
+else
+    echo -e "${YELLOW}VS Code CLI not found — skipping extension install${NC}"
+fi
+
 echo ""
 echo -e "${GREEN}✅ Installation complete!${NC}"
 echo ""
@@ -108,7 +148,4 @@ echo "   - Open iTerm2 preferences (Cmd+,)"
 echo "   - Go to Profiles → Other Actions → Import JSON Profiles"
 echo "   - Select: $DOTFILES_DIR/iterm2/profile.plist"
 echo "   - Or copy the plist file to ~/Library/Preferences/com.googlecode.iterm2.plist"
-echo ""
-echo "🔧 Optional dependencies to install:"
-echo "   brew install fzf zoxide tmux"
 echo ""

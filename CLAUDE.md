@@ -17,12 +17,19 @@ This is a dotfiles repository for managing terminal configuration across multipl
 ├── sync.sh                # Helper to commit/push changes
 ├── README.md              # User-facing documentation
 ├── CLAUDE.md              # This file - development guide
+├── Brewfile                # Homebrew packages (brew bundle install)
 ├── alfred/
 │   └── Alfred.alfredpreferences/  # Alfred settings (symlinked to ~/Library/Application Support/Alfred/Alfred.alfredpreferences)
 │       ├── preferences/           # General Alfred settings
 │       ├── workflows/             # Alfred workflows
 │       ├── remote/                # Alfred Remote settings
 │       └── resources/             # Resources (icons, etc.)
+├── vscode/
+│   ├── settings.json      # VS Code settings (symlinked to ~/Library/Application Support/Code/User/settings.json)
+│   ├── keybindings.json   # VS Code keybindings (symlinked)
+│   └── extensions.txt     # Extension list (install with: cat extensions.txt | xargs -L1 code --install-extension)
+├── positron/
+│   └── settings.json      # Positron settings (symlinked to ~/Library/Application Support/Positron/User/settings.json)
 ├── iterm2/
 │   ├── com.googlecode.iterm2.plist  # Binary plist backup
 │   └── profile.plist                 # Readable plist export
@@ -137,7 +144,33 @@ git push
 
 Also remove from `plugins=()` in `.zshrc`.
 
-### 7. Updating Alfred Preferences
+### 7. Updating Homebrew Packages
+
+After installing/removing packages:
+
+```bash
+brew bundle dump --file=~/.dotfiles/Brewfile --force
+cd ~/.dotfiles
+git add Brewfile
+git commit -m "Update Brewfile"
+git push
+```
+
+On a new machine, `install.sh` runs `brew bundle install` automatically.
+
+### 8. Updating VS Code / Positron Settings
+
+Settings are symlinked, so edits in the editors are tracked automatically. To also capture any new extensions:
+
+```bash
+code --list-extensions > ~/.dotfiles/vscode/extensions.txt
+cd ~/.dotfiles
+git add vscode/ positron/
+git commit -m "Update editor settings"
+git push
+```
+
+### 9. Updating Alfred Preferences
 
 Alfred is symlinked, so any changes you make in Alfred are automatically tracked in git. Just sync when you want to commit them:
 

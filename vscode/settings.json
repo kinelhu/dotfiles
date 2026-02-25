@@ -1,0 +1,74 @@
+{
+    "security.workspace.trust.untrustedFiles": "open",
+    "workbench.editor.enablePreview": false,
+    "markdown-preview-enhanced.enablePreviewZenMode": true,
+    "terminal.integrated.defaultProfile.osx": "tmux",
+    "terminal.integrated.fontFamily": "MesloLGM Nerd Font",
+    "explorer.confirmDragAndDrop": false,
+    "workbench.editor.wrapTabs": true,
+    "[r]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "Posit.air-vscode"
+
+    },
+     "[rmd]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "Posit.air-vscode"
+    },
+    
+    "[quarto]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "quarto.quarto"
+    },
+    "r.lsp.debug": true,
+    "editor.detectIndentation": true,
+    "files.associations": {
+        "*.rmd": "markdown"
+    },
+    "workbench.colorTheme": "Ayu Light Bordered",
+    "editor.fontFamily": "Atkinson Hyperlegible, Menlo, Monaco, 'Courier New', monospace",
+    "editor.fontSize": 14,
+    "markdown-preview-enhanced.codeBlockTheme": "pen-paper-coffee.css",
+    "markdown.styles": [
+        "\\\\Users\\\\kinelhu\\\\OneDrive\\\\Documents\\\\Medicine\\\\3-Resources\\\\Markdown styles\\\\swiss.cs"
+    ],
+    "markdown-preview-enhanced.mermaidTheme": "forest",
+    "[markdown]": {
+        "editor.defaultFormatter": "yzhang.markdown-all-in-one"
+    },
+    "editor.defaultFoldingRangeProvider": "esbenp.prettier-vscode",
+    
+    "latex-workshop.latex.recipe.default": "xelatex -> biber -> xelatex*2",
+    "latex-workshop.latex.tools": [
+    {
+        "name": "xelatex",
+        "command": "xelatex",
+        "args": [
+            "-synctex=1",
+            "-interaction=nonstopmode",
+            "-file-line-error",
+            "%DOC%"
+        ]
+    },
+    {
+        "name": "biber",
+        "command": "biber",
+        "args": [
+            "%DOCFILE%"
+        ]
+    }
+],
+"latex-workshop.latex.recipes": [
+    {
+        "name": "xelatex -> biber -> xelatex*2",
+        "tools": [
+            "xelatex",
+            "biber",
+            "xelatex",
+            "xelatex"
+        ]
+    }
+],
+"vscode-mermaid-extension.useSinglePreview": true,
+"python.languageServer": "Default"
+  }
