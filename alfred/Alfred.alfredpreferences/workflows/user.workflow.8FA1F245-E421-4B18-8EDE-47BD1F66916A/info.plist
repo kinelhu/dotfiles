@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>giovanni.ref2bib</string>
+	<key>connections</key>
+	<dict>
+		<key>09946FB4-1D55-4070-964E-9AF25E387258</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>3365525E-DFFF-4898-97DB-5AFFE8E1E4A0</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>3365525E-DFFF-4898-97DB-5AFFE8E1E4A0</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>46960E1B-9606-4596-8BDA-F58189C5205F</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>AAAC62D8-EBE8-49CC-8ACF-AD63D64A618D</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>46960E1B-9606-4596-8BDA-F58189C5205F</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>055AA12D-8B41-4BBF-8125-DC1E2298CAF1</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>76BACCE3-17C2-4DC0-8E68-93A24DD28B65</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>46960E1B-9606-4596-8BDA-F58189C5205F</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>847DDAC2-5776-4830-8858-40FA480C824B</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>76BACCE3-17C2-4DC0-8E68-93A24DD28B65</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>847DDAC2-5776-4830-8858-40FA480C824B</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>giovanni</string>
+	<key>description</key>
+	<string></string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>ref2bib</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>if [[ "$1" =~ ^10\. ]]; then
+  string="https://doi.org/$1"
+else
+  string="$1"
+fi
+
+echo $string
+
+output=$(curl -LH "Accept: application/x-bibtex" "$string")
+# Check the value of MYPREF and take actions accordingly
+if [ "$MYPREF" = 'clipboard' ]; then
+    # Copy to clipboard
+    echo "$output" | pbcopy
+
+elif [ "$MYPREF" = 'file' ]; then
+    # Save to a file
+    echo "$output" &gt; "$MYDIR/ref2bib_$(date +%s).bib"
+
+elif [ "$MYPREF" = 'both' ]; then
+    # Copy to clipboard and save to a file
+    echo "$output" | pbcopy
+    echo "$output" &gt; "$MYDIR/ref2bib_$(date +%s).bib"
+
+fi</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>11</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>46960E1B-9606-4596-8BDA-F58189C5205F</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string></string>
+				<key>title</key>
+				<string>🎯 done</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>847DDAC2-5776-4830-8858-40FA480C824B</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>acceptsfiles</key>
+				<false/>
+				<key>acceptsmulti</key>
+				<integer>0</integer>
+				<key>acceptstext</key>
+				<true/>
+				<key>acceptsurls</key>
+				<true/>
+				<key>name</key>
+				<string>ref2bib</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.universalaction</string>
+			<key>uid</key>
+			<string>09946FB4-1D55-4070-964E-9AF25E387258</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>conditions</key>
+				<array>
+					<dict>
+						<key>inputstring</key>
+						<string></string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>4</integer>
+						<key>matchstring</key>
+						<string>10\.\d+(\.\d+)*</string>
+						<key>outputlabel</key>
+						<string>DOI 10.?</string>
+						<key>uid</key>
+						<string>055AA12D-8B41-4BBF-8125-DC1E2298CAF1</string>
+					</dict>
+					<dict>
+						<key>inputstring</key>
+						<string></string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>4</integer>
+						<key>matchstring</key>
+						<string>doi.org</string>
+						<key>outputlabel</key>
+						<string>DOI?</string>
+						<key>uid</key>
+						<string>AAAC62D8-EBE8-49CC-8ACF-AD63D64A618D</string>
+					</dict>
+				</array>
+				<key>elselabel</key>
+				<string>else</string>
+				<key>hideelse</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.conditional</string>
+			<key>uid</key>
+			<string>3365525E-DFFF-4898-97DB-5AFFE8E1E4A0</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string># Create a temporary filename with a timestamp
+temp_file="clip_content_$(date +%s).txt"
+
+# Save clipboard content to the temporary file
+echo "$1" &gt; "$temp_file"
+
+# Convert the saved content to bib format and save the result
+#anystyle --stdout -f bib parse $temp_file | pbcopy
+
+# Run the anystyle command and store the output in a variable
+output=$(anystyle --stdout -f bib parse "$temp_file")
+
+# Check the value of MYPREF and take actions accordingly
+if [ "$MYPREF" = 'clipboard' ]; then
+    # Copy to clipboard
+    echo "$output" | pbcopy
+
+elif [ "$MYPREF" = 'file' ]; then
+    # Save to a file
+    echo "$output" &gt; "$MYDIR/ref2bib_$(date +%s).bib"
+
+elif [ "$MYPREF" = 'both' ]; then
+    # Copy to clipboard and save to a file
+    echo "$output" | pbcopy
+    echo "$output" &gt; "$MYDIR/ref2bib_$(date +%s).bib"
+
+fi
+
+
+# Delete the temporary file
+rm "$temp_file"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>11</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>76BACCE3-17C2-4DC0-8E68-93A24DD28B65</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string>In response to this Alfred Forum [thread](https://www.alfredforum.com/topic/21222-convert-citation-to-bibtex/)</string>
+	<key>uidata</key>
+	<dict>
+		<key>09946FB4-1D55-4070-964E-9AF25E387258</key>
+		<dict>
+			<key>xpos</key>
+			<real>450</real>
+			<key>ypos</key>
+			<real>275</real>
+		</dict>
+		<key>3365525E-DFFF-4898-97DB-5AFFE8E1E4A0</key>
+		<dict>
+			<key>xpos</key>
+			<real>625</real>
+			<key>ypos</key>
+			<real>285</real>
+		</dict>
+		<key>46960E1B-9606-4596-8BDA-F58189C5205F</key>
+		<dict>
+			<key>xpos</key>
+			<real>765</real>
+			<key>ypos</key>
+			<real>210</real>
+		</dict>
+		<key>76BACCE3-17C2-4DC0-8E68-93A24DD28B65</key>
+		<dict>
+			<key>xpos</key>
+			<real>770</real>
+			<key>ypos</key>
+			<real>380</real>
+		</dict>
+		<key>847DDAC2-5776-4830-8858-40FA480C824B</key>
+		<dict>
+			<key>xpos</key>
+			<real>1030</real>
+			<key>ypos</key>
+			<real>210</real>
+		</dict>
+	</dict>
+	<key>userconfigurationconfig</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>clipboard</string>
+				<key>pairs</key>
+				<array>
+					<array>
+						<string>File only</string>
+						<string>file</string>
+					</array>
+					<array>
+						<string>Clipboard only</string>
+						<string>clipboard</string>
+					</array>
+					<array>
+						<string>File and Clipboard</string>
+						<string>both</string>
+					</array>
+				</array>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string>Output Preference</string>
+			<key>type</key>
+			<string>popupbutton</string>
+			<key>variable</key>
+			<string>MYPREF</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>~/Desktop</string>
+				<key>filtermode</key>
+				<integer>1</integer>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>applies to 'File only' and 'File and Clipboard' options above</string>
+			<key>label</key>
+			<string>Save .bib files in this directory</string>
+			<key>type</key>
+			<string>filepicker</string>
+			<key>variable</key>
+			<string>MYDIR</string>
+		</dict>
+	</array>
+	<key>variablesdontexport</key>
+	<array/>
+	<key>version</key>
+	<string>0.0.3</string>
+	<key>webaddress</key>
+	<string></string>
+</dict>
+</plist>

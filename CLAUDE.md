@@ -12,10 +12,17 @@ This is a dotfiles repository for managing terminal configuration across multipl
 ~/.dotfiles/
 ├── .zshrc                  # Main zsh config (symlinked to ~/.zshrc)
 ├── .tmux.conf             # tmux config (symlinked to ~/.tmux.conf)
+├── .gitconfig             # Git config (symlinked to ~/.gitconfig)
 ├── install.sh             # Bootstrap script for new machines
 ├── sync.sh                # Helper to commit/push changes
 ├── README.md              # User-facing documentation
 ├── CLAUDE.md              # This file - development guide
+├── alfred/
+│   └── Alfred.alfredpreferences/  # Alfred settings (symlinked to ~/Library/Application Support/Alfred/Alfred.alfredpreferences)
+│       ├── preferences/           # General Alfred settings
+│       ├── workflows/             # Alfred workflows
+│       ├── remote/                # Alfred Remote settings
+│       └── resources/             # Resources (icons, etc.)
 ├── iterm2/
 │   ├── com.googlecode.iterm2.plist  # Binary plist backup
 │   └── profile.plist                 # Readable plist export
@@ -130,7 +137,20 @@ git push
 
 Also remove from `plugins=()` in `.zshrc`.
 
-### 7. Updating iTerm2 Preferences
+### 7. Updating Alfred Preferences
+
+Alfred is symlinked, so any changes you make in Alfred are automatically tracked in git. Just sync when you want to commit them:
+
+```bash
+cd ~/.dotfiles
+git add alfred/
+git commit -m "Update Alfred preferences"
+git push
+```
+
+On a new machine, `install.sh` will link `~/.dotfiles/alfred/Alfred.alfredpreferences` to `~/Library/Application Support/Alfred/Alfred.alfredpreferences` automatically.
+
+### 8. Updating iTerm2 Preferences
 
 After changing iTerm2 settings:
 

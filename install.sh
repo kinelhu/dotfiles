@@ -56,7 +56,15 @@ echo -e "${GREEN}✓ Submodules initialized${NC}"
 echo "🔗 Creating symlinks..."
 create_symlink "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
 create_symlink "$DOTFILES_DIR/.tmux.conf" "$HOME/.tmux.conf"
+create_symlink "$DOTFILES_DIR/.gitconfig" "$HOME/.gitconfig"
 create_symlink "$DOTFILES_DIR/pandoc/header.tex" "$HOME/.local/share/pandoc/templates/header.tex"
+
+# Alfred preferences (macOS only)
+if [ -d "$HOME/Library/Application Support/Alfred" ]; then
+    create_symlink "$DOTFILES_DIR/alfred/Alfred.alfredpreferences" "$HOME/Library/Application Support/Alfred/Alfred.alfredpreferences"
+else
+    echo -e "${YELLOW}Alfred not found — skipping Alfred preferences link${NC}"
+fi
 
 # Create symlinks for oh-my-zsh custom plugins and themes
 echo "🔌 Linking oh-my-zsh custom plugins and themes..."

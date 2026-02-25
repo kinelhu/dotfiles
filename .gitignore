@@ -14,3 +14,7 @@
 
 # Logs
 *.log
+
+# Alfred workflow Python cache
+alfred/**/__pycache__/
+alfred/**/*.pyc

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>keyword_01</key>
+	<string>r</string>
+	<key>keyword_02</key>
+	<string>py</string>
+	<key>keyword_03</key>
+	<string>pygame</string>
+</dict>
+</plist>

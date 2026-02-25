@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>net.cortig.pubmed</string>
+	<key>connections</key>
+	<dict>
+		<key>82E4CE88-8C26-4162-BD91-915B3F48D95D</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>79CAEB8A-CC16-43BB-8261-2EE547CE58A7</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>5722DBA6-D35C-41AE-9409-D29B4963C217</string>
+				<key>modifiers</key>
+				<integer>524288</integer>
+				<key>modifiersubtext</key>
+				<string>Search for MeSH keywords</string>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Corentin Cras-Méneur &amp; Tyler Fitch</string>
+	<key>description</key>
+	<string>Perform a search on PubMed</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Search PubMed</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>plusspaces</key>
+				<false/>
+				<key>url</key>
+				<string>http://www.ncbi.nlm.nih.gov/mesh?term={query}</string>
+				<key>utf8</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.openurl</string>
+			<key>uid</key>
+			<string>5722DBA6-D35C-41AE-9409-D29B4963C217</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>keyword</key>
+				<string>pm</string>
+				<key>subtext</key>
+				<string>Performs a search on PubMed</string>
+				<key>text</key>
+				<string>Search PubMed</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>82E4CE88-8C26-4162-BD91-915B3F48D95D</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>plusspaces</key>
+				<false/>
+				<key>url</key>
+				<string>http://www.ncbi.nlm.nih.gov/pubmed?term={query}</string>
+				<key>utf8</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.openurl</string>
+			<key>uid</key>
+			<string>79CAEB8A-CC16-43BB-8261-2EE547CE58A7</string>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string>This very simple Workflow performs a search on PubMed (biomedical literature searches).
+It was recently updated by Tyler Fitch to offer the possibility to perform a MESH term search instead if you press the Alt (Option) key down.</string>
+	<key>uidata</key>
+	<dict>
+		<key>5722DBA6-D35C-41AE-9409-D29B4963C217</key>
+		<dict>
+			<key>ypos</key>
+			<real>130</real>
+		</dict>
+		<key>79CAEB8A-CC16-43BB-8261-2EE547CE58A7</key>
+		<dict>
+			<key>ypos</key>
+			<real>10</real>
+		</dict>
+		<key>82E4CE88-8C26-4162-BD91-915B3F48D95D</key>
+		<dict>
+			<key>ypos</key>
+			<real>10</real>
+		</dict>
+	</dict>
+	<key>webaddress</key>
+	<string>http://www.cortig.net/</string>
+</dict>
+</plist>
