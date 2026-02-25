@@ -1,0 +1,356 @@
+% Anthropic Style Pandoc Template for R Markdown
+% Portrait orientation with single-column layout
+
+\documentclass[8pt]{article}
+
+% =============================================================================
+% PACKAGES
+% =============================================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[hidelinks,bookmarks=true,bookmarksdepth=3]{hyperref}
+\hypersetup{
+  bookmarksopen=true,
+  bookmarksopenlevel=2,
+  pdftitle={LLM Sycophancy Study},
+  colorlinks=false
+}
+\usepackage{tikz}
+\usepackage[font={small,sf}, labelfont={bf,color=AccentPrimary}, labelsep=period, justification=justified, singlelinecheck=false]{caption}
+\usepackage{setspace}
+
+% Pandoc requirements
+$if(highlighting-macros)$
+$highlighting-macros$
+$endif$
+
+% Max-width command for figures (scales down if too large, leaves small figures alone)
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\makeatother
+
+% Pandoc list spacing
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+% Fix for longtable "none" counter issue
+\newcounter{none}
+
+% Map Pandoc divs to LaTeX environments
+\newcommand{\BeginKbd}[1]{\begin{#1}}
+\newcommand{\EndKbd}[1]{\end{#1}}
+% For fenced divs like ::: {.highlightbox}
+\let\HighlightboxStart\highlightbox
+\let\HighlightboxEnd\endhighlightbox
+% Aliases for backward compatibility
+\let\KeyfindingsStart\highlightbox
+\let\KeyfindingsEnd\endhighlightbox
+\let\ExecsummaryStart\highlightbox
+\let\ExecsummaryEnd\endhighlightbox
+\let\MethodboxStart\highlightbox
+\let\MethodboxEnd\endhighlightbox
+
+% Let kable tables stay small and fit in columns
+% Don't use longtable redefinition - causes issues
+
+% Pandoc CSL references
+$if(csl-refs)$
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2]
+ {}
+ {\par}
+$endif$
+
+% =============================================================================
+% FONTS
+% =============================================================================
+\usepackage{fontspec}
+
+% Set Inter as main font (installed in system)
+\setmainfont{Inter}[
+  UprightFont = *-Regular,
+  BoldFont = *-Bold,
+  ItalicFont = *-Italic,
+  BoldItalicFont = *-BoldItalic,
+  Extension = .otf,
+  Path = /Users/kinelhu/Library/Fonts/
+]
+
+\setsansfont{Inter}[
+  UprightFont = *-Regular,
+  BoldFont = *-Bold,
+  ItalicFont = *-Italic,
+  Extension = .otf,
+  Path = /Users/kinelhu/Library/Fonts/
+]
+
+\setmonofont{JetBrains Mono}[Scale=0.9]
+
+% =============================================================================
+% COLOR DEFINITIONS (Custom Academic Palette)
+% =============================================================================
+
+% Background & Neutrals
+\definecolor{PageBackground}{HTML}{FFFFFF}  % Clean white
+\definecolor{TextPrimary}{HTML}{1A1A1A}     % Near-black
+\definecolor{TextSecondary}{HTML}{6B6B6B}   % Medium gray
+\definecolor{TextTertiary}{HTML}{9B9B9B}    % Light gray
+\definecolor{BorderLight}{HTML}{E0E0E0}     % Light border
+
+% Primary Accent Colors (Teal/Blue theme)
+\definecolor{AccentPrimary}{HTML}{0D7377}    % Deep teal
+\definecolor{AccentLight}{HTML}{E8F4F5}      % Very light teal
+\definecolor{AccentDark}{HTML}{084B4E}       % Dark teal
+
+% Code & Technical
+\definecolor{CodeBg}{HTML}{F5F5F5}          % Light gray
+\definecolor{CodeText}{HTML}{2D2D2D}        % Dark gray
+\definecolor{CodeKeyword}{HTML}{0D7377}     % Teal for keywords
+\definecolor{CodeString}{HTML}{2D6A4F}      % Green for strings
+\definecolor{CodeComment}{HTML}{8B8B8B}     % Gray for comments
+
+% Callouts & Highlights
+\definecolor{CalloutBg}{HTML}{F0F9FA}       % Very light teal
+\definecolor{CalloutBorder}{HTML}{7FB3B5}   % Medium teal
+\definecolor{SuccessGreen}{HTML}{2D6A4F}    % Forest green
+\definecolor{ErrorRed}{HTML}{C75450}        % Keep red for errors
+
+% Legacy names for compatibility
+\definecolor{CoralPrimary}{HTML}{0D7377}    % Map to teal
+\definecolor{CoralLight}{HTML}{E8F4F5}
+\definecolor{CoralDark}{HTML}{084B4E}
+
+% =============================================================================
+% PAGE SETUP
+% =============================================================================
+\geometry{
+  paperwidth=8.5in,     % US Letter width (portrait)
+  paperheight=11in,     % US Letter height (portrait)
+  top=1.5cm,
+  bottom=1.5cm,
+  left=2.5cm,
+  right=2.5cm
+}
+
+% Set page background color (white)
+\pagecolor{PageBackground}
+\color{TextPrimary}
+
+% Text formatting - compact for more content
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}
+\renewcommand{\baselinestretch}{1.15}
+
+% Justified text
+\usepackage{ragged2e}
+\justifying
+
+% =============================================================================
+% HEADER & FOOTER
+% =============================================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0.5pt}
+\renewcommand{\footrule}{\hbox to\headwidth{\color{BorderLight}\leaders\hrule height \footrulewidth\hfill}}
+\fancyfoot[L]{\color{TextSecondary}\small $if(version)$$version$$else$v1.0$endif$ – \today}
+\fancyfoot[C]{\color{TextSecondary}\thepage}
+\fancyfoot[R]{\color{TextSecondary}\small K. El Husseini}
+
+% =============================================================================
+% TITLE FORMATTING
+% =============================================================================
+
+% Section styling
+\titleformat{\section}
+  {\Large\bfseries\color{AccentPrimary}}
+  {}
+  {0em}
+  {}
+
+\titleformat{\subsection}
+  {\large\bfseries\color{TextPrimary}}
+  {}
+  {0em}
+  {}
+
+\titleformat{\subsubsection}
+  {\normalsize\bfseries\color{TextSecondary}}
+  {}
+  {0em}
+  {}
+
+% Adjust spacing - compact for more content
+\titlespacing*{\section}{0pt}{1em}{0.5em}
+\titlespacing*{\subsection}{0pt}{0.8em}{0.4em}
+\titlespacing*{\subsubsection}{0pt}{0.6em}{0.3em}
+
+% =============================================================================
+% CUSTOM ENVIRONMENTS
+% =============================================================================
+
+% Callout Box - elegant design
+\newtcolorbox{calloutbox}{
+  breakable,
+  enhanced,
+  colback=CalloutBg,
+  colframe=AccentPrimary,
+  boxrule=1.5pt,
+  arc=2pt,
+  left=12pt,
+  right=12pt,
+  top=10pt,
+  bottom=10pt,
+  leftrule=4pt,
+  rightrule=0pt,
+  toprule=0pt,
+  bottomrule=0pt,
+  sharp corners=east,
+  fontupper=\small
+}
+
+% Single modular highlight box with optional title
+% Usage: \begin{highlightbox}[Title] or \begin{highlightbox} (no title)
+\newtcolorbox{highlightbox}[1][]{
+  breakable,
+  enhanced jigsaw,
+  colback=white,
+  colframe=AccentPrimary,
+  boxrule=1pt,
+  arc=3pt,
+  left=15pt,
+  right=15pt,
+  top=12pt,
+  bottom=12pt,
+  borderline west={3pt}{0pt}{AccentPrimary},
+  drop shadow={black!20!white},
+  fontupper=\normalsize,
+  before upper={\ifx\relax#1\relax\else{\large\bfseries\color{AccentPrimary}#1}\par\medskip\fi}
+}
+
+% Aliases for backward compatibility
+\let\keyfindings\highlightbox
+\let\endkeyfindings\endhighlightbox
+\let\execsummary\highlightbox
+\let\endexecsummary\endhighlightbox
+\let\methodbox\highlightbox
+\let\endmethodbox\endhighlightbox
+
+% No figure borders - clean presentation
+
+% =============================================================================
+% CODE BLOCKS
+% =============================================================================
+\lstset{
+  basicstyle=\ttfamily\small\color{CodeText},
+  backgroundcolor=\color{CodeBg},
+  keywordstyle=\color{CodeKeyword}\bfseries,
+  stringstyle=\color{CodeString},
+  commentstyle=\color{CodeComment}\itshape,
+  frame=single,
+  frameround=tttt,
+  rulecolor=\color{BorderLight},
+  framesep=5pt,
+  xleftmargin=10pt,
+  xrightmargin=10pt,
+  aboveskip=10pt,
+  belowskip=10pt
+}
+
+% =============================================================================
+% PANDOC TITLE BLOCK
+% =============================================================================
+
+$if(title)$
+\title{
+  \vspace{-2em}
+  \color{AccentPrimary}\Huge\bfseries
+  $title$
+  $if(subtitle)$
+  \\
+  \vspace{0.5em}
+  \Large\color{TextSecondary}
+  $subtitle$
+  $endif$
+}
+$endif$
+
+$if(author)$
+\author{
+  \large\color{TextPrimary}
+  $for(author)$$author$$sep$ \and $endfor$
+}
+$endif$
+
+$if(date)$
+\date{\color{TextSecondary}$date$}
+$else$
+\date{}
+$endif$
+
+% =============================================================================
+% DOCUMENT BODY
+% =============================================================================
+
+\begin{document}
+
+$if(title)$
+\maketitle
+\thispagestyle{fancy}
+$endif$
+
+$if(abstract)$
+\begin{abstract}
+$abstract$
+\end{abstract}
+\vspace{1em}
+$endif$
+
+% Disable section numbering (keeps TOC and body consistent)
+\setcounter{secnumdepth}{0}
+
+$if(toc)$
+{
+\hypersetup{linkcolor=AccentPrimary}
+\setcounter{tocdepth}{2}  % Show sections and subsections
+\renewcommand{\contentsname}{\color{AccentPrimary}\Large Contents}
+% Reduce TOC line spacing
+\setlength{\parskip}{0pt}
+\begin{spacing}{0.8}
+\tableofcontents
+\end{spacing}
+\vspace{1em}
+}
+$endif$
+
+$body$
+
+\end{document}

@@ -57,7 +57,7 @@ echo "🔗 Creating symlinks..."
 create_symlink "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
 create_symlink "$DOTFILES_DIR/.tmux.conf" "$HOME/.tmux.conf"
 create_symlink "$DOTFILES_DIR/.gitconfig" "$HOME/.gitconfig"
-create_symlink "$DOTFILES_DIR/pandoc/header.tex" "$HOME/.local/share/pandoc/templates/header.tex"
+create_symlink "$DOTFILES_DIR/pandoc/templates" "$HOME/.local/share/pandoc/templates"
 
 # Alfred preferences (macOS only)
 if [ -d "$HOME/Library/Application Support/Alfred" ]; then
@@ -79,6 +79,24 @@ if [ -d "$HOME/Library/Application Support/Positron/User" ]; then
     create_symlink "$DOTFILES_DIR/positron/settings.json" "$HOME/Library/Application Support/Positron/User/settings.json"
 else
     echo -e "${YELLOW}Positron not found — skipping Positron settings link${NC}"
+fi
+
+# Zotero plugins and user preferences
+ZOTERO_PROFILE=$(find "$HOME/Library/Application Support/Zotero/Profiles" -maxdepth 1 -name "*.default" -type d 2>/dev/null | head -1)
+if [ -n "$ZOTERO_PROFILE" ]; then
+    echo "📚 Installing Zotero plugins..."
+    # Copy small bundled plugins
+    for xpi in "$DOTFILES_DIR/zotero/extensions/"*.xpi; do
+        cp "$xpi" "$ZOTERO_PROFILE/extensions/"
+        echo -e "${GREEN}✓ $(basename "$xpi")${NC}"
+    done
+    # Install user.js preferences
+    cp "$DOTFILES_DIR/zotero/user.js" "$ZOTERO_PROFILE/user.js"
+    echo -e "${GREEN}✓ Zotero user.js preferences installed${NC}"
+    echo -e "${YELLOW}Note: Download Better BibTeX manually from https://github.com/retorquere/zotero-better-bibtex/releases${NC}"
+    echo -e "${YELLOW}Note: Update machine-specific paths in $DOTFILES_DIR/zotero/user.js${NC}"
+else
+    echo -e "${YELLOW}Zotero not found — skipping Zotero setup${NC}"
 fi
 
 # Create symlinks for oh-my-zsh custom plugins and themes

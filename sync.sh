@@ -33,6 +33,19 @@ if defaults read com.googlecode.iterm2 &>/dev/null 2>&1; then
     echo -e "${GREEN}✓ iTerm2 preferences updated${NC}"
 fi
 
+# Zotero plugins (copy any updated/new .xpi files, skip better-bibtex >50MB)
+ZOTERO_PROFILE=$(find "$HOME/Library/Application Support/Zotero/Profiles" -maxdepth 1 -name "*.default" -type d 2>/dev/null | head -1)
+if [ -n "$ZOTERO_PROFILE" ]; then
+    for xpi in "$ZOTERO_PROFILE/extensions/"*.xpi; do
+        name=$(basename "$xpi")
+        size=$(stat -f%z "$xpi" 2>/dev/null || echo 0)
+        if [ "$size" -lt 5000000 ]; then  # skip files >5MB (i.e. better-bibtex)
+            cp "$xpi" "$DOTFILES_DIR/zotero/extensions/$name"
+        fi
+    done
+    echo -e "${GREEN}✓ Zotero plugins updated${NC}"
+fi
+
 echo ""
 
 # Check if there are any changes
