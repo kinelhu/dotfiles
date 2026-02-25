@@ -85,6 +85,7 @@ fi
 ZOTERO_PROFILE=$(find "$HOME/Library/Application Support/Zotero/Profiles" -maxdepth 1 -name "*.default" -type d 2>/dev/null | head -1)
 if [ -n "$ZOTERO_PROFILE" ]; then
     echo "📚 Installing Zotero plugins..."
+    mkdir -p "$ZOTERO_PROFILE/extensions"
     # Copy small bundled plugins
     for xpi in "$DOTFILES_DIR/zotero/extensions/"*.xpi; do
         cp "$xpi" "$ZOTERO_PROFILE/extensions/"
