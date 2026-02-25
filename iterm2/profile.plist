@@ -11,6 +11,7 @@
     AiModel = "claude-sonnet-4-5";
     AiResponseMaxTokens = 64000;
     AitermURL = "https://api.anthropic.com/v1/messages";
+    AlternateMouseScroll = 1;
     AppleAntiAliasingThreshold = 1;
     ApplePressAndHoldEnabled = 0;
     AppleScrollAnimationEnabled = 0;
@@ -169,7 +170,7 @@
     "NSWindow Frame SUAutomaticUpdateAlert" = "448 573 616 180 0 0 1512 944 ";
     "NSWindow Frame SUStatusFrame" = "1054 -353 400 135 498 -982 1512 944 ";
     "NSWindow Frame SUUpdateAlert" = "944 -573 620 398 498 -982 1512 944 ";
-    "NSWindow Frame iTerm Window 0" = "0 77 1512 867 0 0 1512 950 ";
+    "NSWindow Frame iTerm Window 0" = "385 278 570 458 0 0 1512 950 ";
     "NSWindow Frame iTerm Window 1" = "0 487 570 458 0 0 1512 950 ";
     "New Bookmarks" =     (
                 {
@@ -753,8 +754,8 @@
     NoSyncInstallationId = "6111EE63-B161-4802-A64D-F7629601DD6B";
     NoSyncLastOSVersion = "Version 15.7.3 (Build 24G419)";
     NoSyncLastSystemPythonVersionRequirement = "1.17";
-    NoSyncLastTipTime = "792435109.0344779";
-    NoSyncLaunchExperienceControllerRunCount = 26;
+    NoSyncLastTipTime = "793635707.761706";
+    NoSyncLaunchExperienceControllerRunCount = 30;
     NoSyncNextAnnoyanceTime = "780150263.775799";
     NoSyncOnboardingWindowHasBeenShown34 = 1;
     NoSyncPermissionToShowTip = 1;
@@ -1334,12 +1335,14 @@
         0007,
         0053,
         0076,
+        0099,
         0019,
         0042,
         0065,
         0088,
         0031,
         0008,
+        0100,
         0054,
         0077,
         0020,
@@ -1348,6 +1351,7 @@
         0089,
         0009,
         0032,
+        0101,
         0055,
         0078,
         0021,
@@ -1355,6 +1359,7 @@
         0067,
         0010,
         0090,
+        0102,
         0033,
         0056,
         0079,
@@ -1363,6 +1368,7 @@
         0068,
         0011,
         0091,
+        0103,
         0034,
         0080,
         0057,
@@ -1371,6 +1377,7 @@
         0046,
         0069,
         0012,
+        0092,
         0035,
         0081,
         0058,
@@ -1378,6 +1385,7 @@
         0024,
         0047,
         0070,
+        0093,
         0013,
         0036,
         0059,
@@ -1386,6 +1394,7 @@
         0025,
         0048,
         0071,
+        0094,
         0014,
         0060,
         0037,
@@ -1395,6 +1404,7 @@
         0026,
         0049,
         0072,
+        0095,
         0015,
         0038,
         0061,
@@ -1403,6 +1413,7 @@
         0027,
         0050,
         0073,
+        0096,
         0016,
         0039,
         0062,
@@ -1411,6 +1422,7 @@
         0028,
         0051,
         0074,
+        0097,
         0017,
         0040,
         0063,
@@ -1418,10 +1430,11 @@
         0006,
         0052,
         0029,
+        0098,
         0018,
         0041,
         0064,
-        0092
+        0104
     );
     NoSyncUserHasSelectedCommand = 1;
     NoSyncWindowRestoresWorkspaceAtLaunch = 0;
@@ -1452,7 +1465,7 @@
     SUFeedAlternateAppNameKey = iTerm;
     SUFeedURL = "https://iterm2.com/appcasts/final_modern.xml?shard=21";
     SUHasLaunchedBefore = 1;
-    SULastCheckTime = "2026-02-10 16:51:47 +0000";
+    SULastCheckTime = "2026-02-24 14:21:47 +0000";
     SUSendProfileInfo = 0;
     SUUpdateGroupIdentifier = 1509345405;
     SUUpdateRelaunchingMarker = 0;
