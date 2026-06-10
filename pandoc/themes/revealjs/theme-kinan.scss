@@ -53,6 +53,11 @@ $selectionColor:            #fff;
   flex-shrink: 0;
 }
 
+// Empty h2 (## with no title) — hide completely, no underline
+.reveal .slides section.level2 h2:empty {
+  display: none;
+}
+
 // ----- Title pinned at top, content centred below (.slide-body from Lua filter) -----
 .reveal .slides section.level2 {
   display: flex !important;
@@ -90,6 +95,15 @@ $selectionColor:            #fff;
     line-height: 1.3;
     border-bottom: none;
   }
+}
+
+// When a custom background-color is set on the section slide, show h1 as plain white text
+// (no badge box — the background colour itself carries the section identity)
+.reveal .slides section.level1[data-background-color] h1 {
+  background-color: transparent;
+  border-radius: 0;
+  padding: 0.2em 0;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
 }
 
 // ----- Title page -----
@@ -135,6 +149,52 @@ $selectionColor:            #fff;
     background-color: $text-secondary !important;
     top: 0.5em !important;
     border-radius: 50%;
+  }
+}
+
+// ----- Ordered lists: numbered AccentPrimary badges -----
+.reveal ol,
+.reveal ol ol { list-style: none !important; }
+
+.reveal ol {
+  counter-reset: item;
+  padding-left: 1.2em;
+}
+
+.reveal ol > li {
+  counter-increment: item;
+  position: relative;
+  padding-left: 2.2em;
+  margin-bottom: 0.25em;
+
+  &::before {
+    content: counter(item);
+    position: absolute;
+    left: 0;
+    top: 0.05em;
+    width: 1.5em;
+    height: 1.5em;
+    background-color: $accent-primary;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.72em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+}
+
+// Sub-items: smaller grey badge
+.reveal ol ol > li {
+  color: mix($text-primary, #fff, 70%);
+  padding-left: 2em;
+
+  &::before {
+    background-color: $text-secondary !important;
+    font-size: 0.65em !important;
+    width: 1.4em !important;
+    height: 1.4em !important;
   }
 }
 
@@ -216,6 +276,10 @@ $selectionColor:            #fff;
   border-radius: 2px;
 }
 
+// ----- Images -----
+.reveal section img    { display: block; margin: 0 auto; }
+.reveal section figure { display: flex; justify-content: center; }
+
 // ----- Figure captions -----
 .reveal figure figcaption,
 .reveal .quarto-float-caption {
@@ -245,6 +309,22 @@ $selectionColor:            #fff;
 .reveal .smtext, .reveal .smtext p, .reveal .smtext li { font-size: 0.82em; }
 .reveal .fntext, .reveal .fntext p, .reveal .fntext li { font-size: 0.70em; }
 .reveal .sstext, .reveal .sstext p, .reveal .sstext li { font-size: 0.60em; }
+
+// ----- Utility: vertical centering -----
+// Usage: ::: {.vcenter}
+.reveal .vcenter {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+// ----- Mermaid diagrams -----
+.reveal .mermaid { width: 100%; text-align: center; }
+.reveal .mermaid svg {
+  width: 100% !important;
+  height: auto !important;
+  max-height: 65vh;
+}
 
 // ----- Fragments -----
 // Standard .fragment already handled by RevealJS JS.
@@ -349,3 +429,15 @@ $selectionColor:            #fff;
 }
 
 .reveal .reactable .rt-td { border-color: $border-light !important; }
+
+// ----- gt tables -----
+.reveal .gt_col_heading {
+  background-color: $accent-primary !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+}
+.reveal .gt_row td,
+.reveal .gt_stub_row td {
+  color: $text-primary !important;
+  font-weight: normal !important;
+}

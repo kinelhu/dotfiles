@@ -126,15 +126,25 @@ cp ~/.local/share/pandoc/themes/revealjs/theme-kinan.scss .
 format:
   revealjs:
     theme: [simple, theme-kinan.scss]
-    progress: true
     slide-number: c/t
+    transition: none
+    fig-align: center
+    scrollable: true
+    embed-resources: true
+    auto-stretch: false
+    progress: true
     width: 1600
     height: 900
-    embed-resources: true
     navigation-mode: linear
 filters:
   - /Users/kinelhu/.local/share/pandoc/filters/revealjs-wrap-body.lua
+mermaid-format: svg
+execute:
+  echo: false
 ```
+
+> `auto-stretch: false` — prevent Quarto from auto-resizing R figures.
+> `scrollable: true` — slide scrolls if content overflows.
 
 ### Syntax reference
 
@@ -183,6 +193,25 @@ Content revealed on next keypress.
 **Full-screen image slide:**
 ```markdown
 ## {background-image="images/fig.png" background-size="contain"}
+```
+
+**Coloured section slide** (custom background; h1 appears as plain white text over it):
+```markdown
+# Section title {background-color="#4279d7"}
+```
+
+**Vertical centering utility** (useful to manually center a block of content):
+```markdown
+::: {.vcenter}
+content
+:::
+```
+
+**Mermaid diagrams** — add `mermaid-format: svg` to YAML; no extra CSS needed.
+
+**Inline text colour:**
+```markdown
+[Important text]{style="color: #c0392b;"}
 ```
 
 **Footnote / citation:**

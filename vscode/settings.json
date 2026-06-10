@@ -25,7 +25,7 @@
     "files.associations": {
         "*.rmd": "markdown"
     },
-    "workbench.colorTheme": "Ayu Light Bordered",
+    "workbench.colorTheme": "Monokai Pro",
     "editor.fontFamily": "Atkinson Hyperlegible, Menlo, Monaco, 'Courier New', monospace",
     "editor.fontSize": 14,
     "markdown-preview-enhanced.codeBlockTheme": "pen-paper-coffee.css",
@@ -70,5 +70,9 @@
     }
 ],
 "vscode-mermaid-extension.useSinglePreview": true,
-"python.languageServer": "Default"
+"python.languageServer": "Default",
+"python.defaultInterpreterPath": "/opt/miniconda3/bin/python",
+"python-envs.defaultEnvManager": "ms-python.python:conda",
+"python-envs.defaultPackageManager": "ms-python.python:conda",
+"terminal.integrated.inheritEnv": false
   }
