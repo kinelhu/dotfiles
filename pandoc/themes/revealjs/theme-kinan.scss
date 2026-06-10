@@ -277,33 +277,42 @@ $selectionColor:            #fff;
 }
 
 // ----- Images -----
-.reveal section img    { display: block; margin: 0 auto; }
+.reveal section img { display: block; margin: 0 auto; }
+
 .reveal section figure,
 .reveal .quarto-figure {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  text-align: center;
   margin: 0 auto;
+  p { margin: 0; }
 }
+// text-align: center only works on inline/inline-block children
+.reveal section figure img,
+.reveal .quarto-figure img { display: inline-block; }
 
 // ----- Figure captions -----
 .reveal figure figcaption,
 .reveal .quarto-float-caption {
-  font-size: 0.38em;
+  font-size: 0.30em;
   text-align: center;
   color: $text-secondary;
   font-style: italic;
-  margin-top: 0.3em;
+  margin-top: 0.2em;
 }
 
 // ----- Footer -----
 .reveal .footer {
-  font-size: 0.38em;
+  font-size: 0.55em;
   color: $text-secondary;
   font-family: $mainFont;
+  position: fixed !important;
+  bottom: 0.5em !important;
+  left: 3.2em !important;
+  right: auto !important;
+  transform: none !important;
+  text-align: left !important;
+  width: auto !important;
 }
 
-// RevealJS adds .has-dark-background automatically on slides with a dark background-color
 .reveal.has-dark-background .footer {
   color: rgba(255, 255, 255, 0.55);
 }
