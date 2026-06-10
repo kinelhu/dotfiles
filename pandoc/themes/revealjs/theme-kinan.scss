@@ -317,6 +317,10 @@ $selectionColor:            #fff;
   background-color: transparent;
 }
 
+.reveal.has-dark-background .slide-number {
+  color: rgba(255, 255, 255, 0.55);
+}
+
 // ----- Font size helpers -----
 .reveal .smtext, .reveal .smtext p, .reveal .smtext li { font-size: 0.82em; }
 .reveal .fntext, .reveal .fntext p, .reveal .fntext li { font-size: 0.70em; }
