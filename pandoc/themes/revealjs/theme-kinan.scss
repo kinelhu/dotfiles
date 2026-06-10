@@ -278,7 +278,13 @@ $selectionColor:            #fff;
 
 // ----- Images -----
 .reveal section img    { display: block; margin: 0 auto; }
-.reveal section figure { display: flex; justify-content: center; }
+.reveal section figure,
+.reveal .quarto-figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+}
 
 // ----- Figure captions -----
 .reveal figure figcaption,
