@@ -1,0 +1,351 @@
+// ============================================================
+// theme-kinan.scss — RevealJS / Quarto
+// Mirrors the mdslides / beamer-header.tex aesthetic
+// K. El Husseini
+// ============================================================
+
+/*-- scss:defaults --*/
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
+// Colour palette (mirrors beamer-header.tex)
+$accent-primary:  #27A9BC;
+$alert-blue:      #284BBD;
+$example-green:   #28BD9F;
+
+$accent-dark:     mix(#000, $accent-primary, 35%);
+$block-bg:        mix($accent-primary, #fff, 6%);
+$alert-bg:        mix($alert-blue,     #fff, 8%);
+$example-bg:      mix($example-green,  #fff, 8%);
+
+$text-primary:    rgba(0, 0, 0, 0.90);
+$text-secondary:  rgba(0, 0, 0, 0.42);
+$border-light:    rgba(0, 0, 0, 0.12);
+
+// RevealJS SCSS variables
+$backgroundColor:           #ffffff;
+$mainFont:                  'Inter', system-ui, -apple-system, sans-serif;
+$mainFontSize:              28px;
+$mainColor:                 $text-primary;
+$headingFont:               'Inter', system-ui, -apple-system, sans-serif;
+$headingColor:              $accent-primary;
+$headingFontWeight:         700;
+$headingTextTransform:      none;
+$headingTextShadow:         none;
+$heading1Size:              1.8em;
+$heading2Size:              1.3em;
+$heading3Size:              1.05em;
+$codeFont:                  'JetBrains Mono', 'Fira Code', monospace;
+$linkColor:                 $accent-primary;
+$linkColorHover:            $accent-dark;
+$selectionBackgroundColor:  mix($accent-primary, #fff, 30%);
+$selectionColor:            #fff;
+
+/*-- scss:rules --*/
+
+// ----- Slide title: coloured + thin underline -----
+.reveal .slides section h2 {
+  color: $accent-primary;
+  font-weight: 700;
+  padding-bottom: 0.2em;
+  border-bottom: 1.5px solid $accent-primary;
+  margin-bottom: 0.5em;
+  flex-shrink: 0;
+}
+
+// ----- Title pinned at top, content centred below (.slide-body from Lua filter) -----
+.reveal .slides section.level2 {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  height: 100% !important;
+  top: 0 !important;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  box-sizing: border-box;
+}
+
+.reveal .slides section.level2 > .slide-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+// ----- Section divider slide: badge style -----
+.reveal .slides section.title-slide.level1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  h1 {
+    background-color: $accent-primary;
+    color: #fff;
+    font-size: 1.5em;
+    font-weight: 700;
+    padding: 0.4em 1em;
+    border-radius: 4px;
+    display: inline-block;
+    max-width: 85%;
+    line-height: 1.3;
+    border-bottom: none;
+  }
+}
+
+// ----- Title page -----
+#title-slide .title    { color: $accent-primary; border-bottom: 1px solid $accent-primary; padding-bottom: 0.3em; }
+#title-slide .subtitle { color: $text-secondary; font-size: 0.8em; font-weight: 400; }
+#title-slide .author,
+#title-slide .date,
+#title-slide .institute { color: $text-primary; font-size: 0.65em; }
+
+// ----- Bullet points: coloured squares -----
+.reveal ul,
+.reveal ul ul { list-style: none !important; }
+
+.reveal ul {
+  padding-left: 1.2em;
+}
+
+.reveal ul > li {
+  position: relative;
+  padding-left: 1.1em;
+  margin-bottom: 0.25em;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.45em;
+    width: 0.45em;
+    height: 0.45em;
+    background-color: $accent-primary;
+  }
+}
+
+// Sub-items: grey bullet only (no square)
+.reveal ul ul > li {
+  color: mix($text-primary, #fff, 70%);
+  padding-left: 1.1em;
+
+  &::before {
+    content: '' !important;
+    width: 0.35em !important;
+    height: 0.35em !important;
+    background-color: $text-secondary !important;
+    top: 0.5em !important;
+    border-radius: 50%;
+  }
+}
+
+// ----- Blocks: .block / .alertblock / .exampleblock -----
+// Rendered as raw <div> by the Lua filter — same syntax as Beamer, no Quarto CSS conflict.
+
+.reveal .beamer-block {
+  border-radius: 2px;
+  margin: 0.3em 0;
+  overflow: hidden;
+  font-size: 0.88em;
+  text-align: left;
+}
+
+.reveal .beamer-block .block-title {
+  font-weight: 700;
+  font-size: 1em;
+  padding: 0.2em 0.6em;
+  color: #fff;
+  line-height: 1.3;
+}
+
+.reveal .beamer-block .block-body {
+  padding: 0.2em 0.6em;
+  line-height: 1.3;
+  p, ul, ol { margin: 0; }
+}
+
+.reveal .block      .block-title { background-color: $accent-primary; }
+.reveal .block      .block-body  { background-color: $block-bg; color: $text-primary; }
+
+.reveal .alertblock .block-title { background-color: $alert-blue; }
+.reveal .alertblock .block-body  { background-color: $alert-bg; color: $text-primary; }
+
+.reveal .exampleblock .block-title { background-color: $example-green; }
+.reveal .exampleblock .block-body  { background-color: $example-bg; color: $text-primary; }
+
+// ----- Tables -----
+.reveal table {
+  font-size: 0.75em;
+  border-collapse: collapse;
+  width: auto;
+  margin: 0.5em auto;
+}
+
+.reveal table thead th {
+  background-color: $accent-primary;
+  color: #fff;
+  font-weight: 600;
+  padding: 0.4em 0.8em;
+  text-align: left;
+  border: none;
+}
+
+.reveal table tbody td {
+  padding: 0.3em 0.8em;
+  border-bottom: 0.5px solid $border-light;
+  border-top: none;
+}
+
+.reveal table tbody tr:nth-child(even) td {
+  background-color: mix($accent-primary, #fff, 4%);
+}
+
+// ----- Code -----
+.reveal pre {
+  font-size: 0.65em;
+  border-radius: 4px;
+  box-shadow: none;
+  border: 1px solid $border-light;
+}
+
+.reveal code {
+  font-family: $codeFont;
+  font-size: 0.82em;
+  color: $accent-dark;
+  background-color: $block-bg;
+  padding: 0.1em 0.3em;
+  border-radius: 2px;
+}
+
+// ----- Figure captions -----
+.reveal figure figcaption,
+.reveal .quarto-float-caption {
+  font-size: 0.38em;
+  text-align: center;
+  color: $text-secondary;
+  font-style: italic;
+  margin-top: 0.3em;
+}
+
+// ----- Progress bar -----
+.reveal .progress {
+  background-color: $border-light;
+  height: 3px;
+  span { background-color: $accent-primary; }
+}
+
+// ----- Slide number -----
+.reveal .slide-number {
+  color: $text-secondary;
+  font-size: 0.55em;
+  font-family: $mainFont;
+  background-color: transparent;
+}
+
+// ----- Font size helpers -----
+.reveal .smtext, .reveal .smtext p, .reveal .smtext li { font-size: 0.82em; }
+.reveal .fntext, .reveal .fntext p, .reveal .fntext li { font-size: 0.70em; }
+.reveal .sstext, .reveal .sstext p, .reveal .sstext li { font-size: 0.60em; }
+
+// ----- Fragments -----
+// Standard .fragment already handled by RevealJS JS.
+// Custom highlight variants using theme colours:
+//   ::: {.fragment .highlight-accent}  → AccentPrimary, bold
+//   ::: {.fragment .highlight-alert}   → AlertBlue, bold
+//   ::: {.fragment .semi-fade-out}     → dims previous content to 40%
+
+.reveal .fragment.highlight-accent { opacity: 1; visibility: visible; }
+.reveal .fragment.highlight-accent.visible { color: $accent-primary; font-weight: 700; }
+
+.reveal .fragment.highlight-alert { opacity: 1; visibility: visible; }
+.reveal .fragment.highlight-alert.visible { color: $alert-blue; font-weight: 700; }
+
+.reveal .fragment.semi-fade-out { opacity: 1; }
+.reveal .fragment.semi-fade-out.visible { opacity: 0.4; }
+
+// ----- Footnote / citation -----
+// Usage :  ::: {.footnote}
+//          Auteur, *Journal*, Année.
+//          :::
+// Appears bottom-right, very small, italic.
+
+.reveal .footnote {
+  position: absolute;
+  bottom: 2.2em;
+  right: 1.5em;
+  font-size: 0.33em;
+  color: $text-secondary;
+  font-style: italic;
+  text-align: right;
+  max-width: 65%;
+  line-height: 1.3;
+  p { margin: 0; }
+}
+
+// ----- DT::datatable() styling -----
+// Overrides Bootstrap/DataTables defaults to match theme colours.
+// Works automatically when embed-resources: true is set.
+
+.reveal .datatables {
+  font-size: 0.72em;
+  font-family: $mainFont;
+}
+
+.reveal .datatables table.dataTable {
+  border-collapse: collapse !important;
+  width: auto !important;
+  margin: 0 auto !important;
+}
+
+.reveal .datatables table.dataTable thead th,
+.reveal .datatables table.dataTable thead td {
+  background-color: $accent-primary !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  padding: 0.35em 0.7em !important;
+  border: none !important;
+}
+
+.reveal .datatables table.dataTable tbody td {
+  padding: 0.25em 0.7em !important;
+  border-bottom: 0.5px solid $border-light !important;
+  border-top: none !important;
+}
+
+.reveal .datatables table.dataTable tbody tr:nth-child(even) td {
+  background-color: mix($accent-primary, #fff, 4%) !important;
+}
+
+.reveal .datatables .dataTables_filter input {
+  border: 1px solid $border-light;
+  border-radius: 2px;
+  padding: 0.15em 0.4em;
+  font-family: $mainFont;
+}
+
+.reveal .datatables .dataTables_paginate .paginate_button.current,
+.reveal .datatables .dataTables_paginate .paginate_button.current:hover {
+  background: $accent-primary !important;
+  color: #fff !important;
+  border-radius: 2px;
+  border: none !important;
+}
+
+// ----- reactable styling -----
+
+.reveal .reactable {
+  font-size: 0.72em;
+  font-family: $mainFont;
+}
+
+.reveal .reactable .rt-thead .rt-th {
+  background-color: $accent-primary !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  border: none !important;
+}
+
+.reveal .reactable .rt-tr-group:nth-child(even) .rt-td {
+  background-color: mix($accent-primary, #fff, 4%) !important;
+}
+
+.reveal .reactable .rt-td { border-color: $border-light !important; }

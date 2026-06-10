@@ -1,7 +1,7 @@
 % Anthropic Style Pandoc Template for R Markdown
 % Portrait orientation with single-column layout
 
-\documentclass[10pt]{article}
+\documentclass[8pt]{article}
 
 % =============================================================================
 % PACKAGES
@@ -170,43 +170,38 @@ $endif$
 \setmonofont{JetBrains Mono}[Scale=0.9]
 
 % =============================================================================
-% COLOR DEFINITIONS
+% COLOR DEFINITIONS (Custom Academic Palette)
 % =============================================================================
 
-% Seeds — only these 3 values need changing to switch the theme.
-% Everything else is derived automatically via xcolor.
-\definecolor{AccentPrimary}{HTML}{27A9BC}   % main accent  (default: 0D7377)
-\definecolor{AlertOrange}{HTML}{284BBD}     % warnings / errors (default: C0550A)
-\definecolor{ExampleGreen}{HTML}{28BD9F}    % success / positive (default: 1A6B3C)
+% Background & Neutrals
+\definecolor{PageBackground}{HTML}{FFFFFF}  % Clean white
+\definecolor{TextPrimary}{HTML}{1A1A1A}     % Near-black
+\definecolor{TextSecondary}{HTML}{6B6B6B}   % Medium gray
+\definecolor{TextTertiary}{HTML}{9B9B9B}    % Light gray
+\definecolor{BorderLight}{HTML}{E0E0E0}     % Light border
 
-% Derived from AccentPrimary
-\colorlet{AccentDark}{AccentPrimary!60!black}
-\colorlet{AccentLight}{AccentPrimary!7!white}
-\colorlet{CalloutBg}{AccentPrimary!6!white}
-\colorlet{CalloutBorder}{AccentPrimary!50!white}
+% Primary Accent Colors (Teal/Blue theme)
+\definecolor{AccentPrimary}{HTML}{0D7377}    % Deep teal
+\definecolor{AccentLight}{HTML}{E8F4F5}      % Very light teal
+\definecolor{AccentDark}{HTML}{084B4E}       % Dark teal
 
-% Neutrals (independent of accent)
-\colorlet{PageBackground}{white}
-\colorlet{TextPrimary}{black!90}
-\colorlet{TextSecondary}{black!42}
-\colorlet{TextTertiary}{black!38}
-\colorlet{BorderLight}{black!12}
+% Code & Technical
+\definecolor{CodeBg}{HTML}{F5F5F5}          % Light gray
+\definecolor{CodeText}{HTML}{2D2D2D}        % Dark gray
+\definecolor{CodeKeyword}{HTML}{0D7377}     % Teal for keywords
+\definecolor{CodeString}{HTML}{2D6A4F}      % Green for strings
+\definecolor{CodeComment}{HTML}{8B8B8B}     % Gray for comments
 
-% Code syntax
-\colorlet{CodeBg}{black!4}
-\colorlet{CodeText}{black!85}
-\colorlet{CodeKeyword}{AccentPrimary}
-\colorlet{CodeString}{ExampleGreen!60!black}
-\colorlet{CodeComment}{black!55}
+% Callouts & Highlights
+\definecolor{CalloutBg}{HTML}{F0F9FA}       % Very light teal
+\definecolor{CalloutBorder}{HTML}{7FB3B5}   % Medium teal
+\definecolor{SuccessGreen}{HTML}{2D6A4F}    % Forest green
+\definecolor{ErrorRed}{HTML}{C75450}        % Keep red for errors
 
-% Semantic aliases
-\colorlet{SuccessGreen}{ExampleGreen!60!black}
-\colorlet{ErrorRed}{AlertOrange}
-
-% Legacy names for backward compatibility
-\colorlet{CoralPrimary}{AccentPrimary}
-\colorlet{CoralLight}{AccentLight}
-\colorlet{CoralDark}{AccentDark}
+% Legacy names for compatibility
+\definecolor{CoralPrimary}{HTML}{0D7377}    % Map to teal
+\definecolor{CoralLight}{HTML}{E8F4F5}
+\definecolor{CoralDark}{HTML}{084B4E}
 
 % =============================================================================
 % PAGE SETUP
@@ -243,7 +238,7 @@ $endif$
 \renewcommand{\footrule}{\hbox to\headwidth{\color{BorderLight}\leaders\hrule height \footrulewidth\hfill}}
 \fancyfoot[L]{\color{TextSecondary}\small $if(version)$v$version$ \textendash\ \today$else$\today$endif$}
 \fancyfoot[C]{\color{TextSecondary}\thepage}
-$if(author)$\fancyfoot[R]{\color{TextSecondary}\small $for(author)$$author$$sep$, $endfor$}$endif$
+\fancyfoot[R]{\color{TextSecondary}\small K. El Husseini}
 
 % =============================================================================
 % TITLE FORMATTING

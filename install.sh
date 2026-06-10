@@ -58,6 +58,9 @@ create_symlink "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
 create_symlink "$DOTFILES_DIR/.tmux.conf" "$HOME/.tmux.conf"
 create_symlink "$DOTFILES_DIR/.gitconfig" "$HOME/.gitconfig"
 create_symlink "$DOTFILES_DIR/pandoc/templates" "$HOME/.local/share/pandoc/templates"
+create_symlink "$DOTFILES_DIR/pandoc/defaults"  "$HOME/.local/share/pandoc/defaults"
+create_symlink "$DOTFILES_DIR/pandoc/filters"   "$HOME/.local/share/pandoc/filters"
+create_symlink "$DOTFILES_DIR/pandoc/themes"    "$HOME/.local/share/pandoc/themes"
 
 # Alfred preferences (macOS only)
 if [ -d "$HOME/Library/Application Support/Alfred" ]; then
