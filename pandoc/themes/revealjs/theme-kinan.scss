@@ -290,6 +290,18 @@ $selectionColor:            #fff;
   margin-top: 0.3em;
 }
 
+// ----- Footer -----
+.reveal .footer {
+  font-size: 0.38em;
+  color: $text-secondary;
+  font-family: $mainFont;
+}
+
+// RevealJS adds .has-dark-background automatically on slides with a dark background-color
+.reveal.has-dark-background .footer {
+  color: rgba(255, 255, 255, 0.55);
+}
+
 // ----- Progress bar -----
 .reveal .progress {
   background-color: $border-light;
