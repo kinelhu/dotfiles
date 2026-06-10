@@ -1,0 +1,35 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "mdslides",
+      "detail": "Compile current .md to Beamer PDF",
+      "type": "shell",
+      "command": "mdslides '${file}'",
+      "options": { "shell": { "executable": "zsh", "args": ["-i", "-c"] } },
+      "group": { "kind": "build", "isDefault": true },
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "mdslides --draft",
+      "detail": "Fast layout check — images as grey boxes",
+      "type": "shell",
+      "command": "mdslides '${file}' --draft",
+      "options": { "shell": { "executable": "zsh", "args": ["-i", "-c"] } },
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "mdslides --handout",
+      "detail": "Compile with \\pause overlays collapsed",
+      "type": "shell",
+      "command": "mdslides '${file}' --handout",
+      "options": { "shell": { "executable": "zsh", "args": ["-i", "-c"] } },
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "problemMatcher": []
+    }
+  ]
+}

@@ -11,10 +11,10 @@ My personal configuration for macOS — terminal, editors, apps, and packages.
 | **git** | `.gitconfig` | Symlink |
 | **iTerm2** | Preferences plist + profile | Copied on sync |
 | **Alfred** | Full `Alfred.alfredpreferences` | Symlink |
-| **VS Code** | `settings.json`, `keybindings.json`, extension list | Symlink + list |
+| **VS Code / Positron** | `settings.json`, `keybindings.json`, `tasks.json`, extension list | Symlink + list |
 | **Positron** | `settings.json` | Symlink |
 | **Zotero** | `user.js` preferences + 4 plugins (`.xpi`) | Copied on sync/install |
-| **Pandoc** | All templates in `~/.local/share/pandoc/templates/` | Symlink (whole dir) |
+| **Pandoc** | templates, defaults, filters, themes → `~/.local/share/pandoc/` | Symlink (whole dirs) |
 | **Homebrew** | `Brewfile` (formulae + casks) | Generated on sync |
 | **oh-my-zsh** | Plugins + Dracula theme | Git submodules |
 
@@ -38,7 +38,14 @@ cd ~/.dotfiles
 5. Install VS Code extensions
 6. Copy Zotero plugins and `user.js` into the active Zotero profile
 
-> **After install:** open Zotero and download [Better BibTeX](https://github.com/retorquere/zotero-better-bibtex/releases) manually (too large to store in git). Also update the machine-specific paths in `~/.dotfiles/zotero/user.js`.
+> **After install — manual steps:**
+> - **Zotero**: download [Better BibTeX](https://github.com/retorquere/zotero-better-bibtex/releases) manually (>50 MB, excluded from git). Update machine-specific paths in `~/.dotfiles/zotero/user.js`.
+> - **mdmath (VS Code LaTeX preview)**: `goessner.mdmath` is not on the VS Code marketplace — clone and install manually:
+>   ```bash
+>   git clone https://github.com/goessner/mdmath.git ~/.vscode/extensions/mdmath
+>   cd ~/.vscode/extensions/mdmath && npm install
+>   ```
+> - **RevealJS theme**: copy `~/.local/share/pandoc/themes/revealjs/theme-kinan.scss` to each new presentation project (Quarto requires the SCSS alongside the `.qmd`).
 
 ---
 
@@ -79,8 +86,9 @@ source ~/.zshrc
 ├── alfred/
 │   └── Alfred.alfredpreferences/  # → ~/Library/Application Support/Alfred/
 ├── vscode/
-│   ├── settings.json            # → ~/Library/Application Support/Code/User/
-│   ├── keybindings.json         # → ~/Library/Application Support/Code/User/
+│   ├── settings.json            # → Code/User/ and Positron/User/
+│   ├── keybindings.json         # → Code/User/ (Cmd+Shift+D = mdslides --draft)
+│   ├── tasks.json               # → Code/User/ and Positron/User/ (global mdslides tasks)
 │   └── extensions.txt           # Installed via `code --install-extension`
 ├── positron/
 │   └── settings.json            # → ~/Library/Application Support/Positron/User/
@@ -91,7 +99,18 @@ source ~/.zshrc
 │   ├── profile.plist            # Readable preferences
 │   └── com.googlecode.iterm2.plist
 ├── pandoc/
-│   └── templates/               # → ~/.local/share/pandoc/templates/ (whole dir)
+│   ├── README.md                # Full syntax reference (Beamer + RevealJS)
+│   ├── defaults/                # → ~/.local/share/pandoc/defaults/
+│   │   ├── slides-kinan.yaml    # Beamer: xelatex, Inter, beamer-header.tex
+│   │   ├── article-kinan.yaml
+│   │   └── docx-kinan.yaml
+│   ├── filters/                 # → ~/.local/share/pandoc/filters/
+│   │   ├── beamer-blocks.lua    # alertblock/exampleblock for Beamer
+│   │   └── revealjs-wrap-body.lua  # block divs + .slide-body for RevealJS
+│   ├── templates/               # → ~/.local/share/pandoc/templates/
+│   │   └── beamer-header.tex    # Colour palette, Inter font, footline, blocks
+│   └── themes/revealjs/
+│       └── theme-kinan.scss     # RevealJS theme (copy to each project)
 └── oh-my-zsh-custom/
     ├── plugins/
     │   ├── zsh-autosuggestions/     (submodule)

@@ -5,5 +5,11 @@
         "command": "type",
         "args": { "text": "%>%" },
         "when": "(editorTextFocus | terminalFocus) && editorLangId == r"
+    },
+    {
+        "key": "Cmd+Shift+d",
+        "command": "workbench.action.tasks.runTask",
+        "args": "mdslides --draft",
+        "when": "editorLangId == markdown || editorLangId == quarto"
     }
 ]

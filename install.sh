@@ -71,10 +71,15 @@ fi
 
 # VS Code settings
 if [ -d "$HOME/Library/Application Support/Code/User" ]; then
-    create_symlink "$DOTFILES_DIR/vscode/settings.json" "$HOME/Library/Application Support/Code/User/settings.json"
+    create_symlink "$DOTFILES_DIR/vscode/settings.json"    "$HOME/Library/Application Support/Code/User/settings.json"
     create_symlink "$DOTFILES_DIR/vscode/keybindings.json" "$HOME/Library/Application Support/Code/User/keybindings.json"
+    create_symlink "$DOTFILES_DIR/vscode/tasks.json"       "$HOME/Library/Application Support/Code/User/tasks.json"
 else
     echo -e "${YELLOW}VS Code not found — skipping VS Code settings link${NC}"
+fi
+
+if [ -d "$HOME/Library/Application Support/Positron/User" ]; then
+    create_symlink "$DOTFILES_DIR/vscode/tasks.json" "$HOME/Library/Application Support/Positron/User/tasks.json"
 fi
 
 # Positron settings
