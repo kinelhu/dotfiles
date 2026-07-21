@@ -400,6 +400,19 @@ $else$
 \date{}
 $endif$
 
+% -----------------------------------------------------------------------------
+% Styled table of contents. Invoke \styledtoc anywhere in the Markdown body
+% (with `toc: false`) to place the TOC exactly where you want it — e.g. after a
+% short preface — with the same styling as the automatic `toc: true` version.
+% -----------------------------------------------------------------------------
+\newcommand{\styledtoc}{%
+  {\hypersetup{linkcolor=AccentPrimary}%
+   \setcounter{tocdepth}{2}%
+   \setlength{\parskip}{0pt}%
+   \begin{spacing}{0.8}\tableofcontents\end{spacing}%
+   \vspace{1em}}%
+  \newpage}
+
 % =============================================================================
 % DOCUMENT BODY
 % =============================================================================
@@ -428,17 +441,7 @@ $endif$
 \setcounter{secnumdepth}{0}
 
 $if(toc)$
-{
-\hypersetup{linkcolor=AccentPrimary}
-\setcounter{tocdepth}{2}  % Show sections and subsections
-% Reduce TOC line spacing
-\setlength{\parskip}{0pt}
-\begin{spacing}{0.8}
-\tableofcontents
-\end{spacing}
-\vspace{1em}
-}
-\newpage
+\styledtoc
 $endif$
 
 $body$
