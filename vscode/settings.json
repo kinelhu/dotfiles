@@ -25,7 +25,7 @@
     "files.associations": {
         "*.rmd": "markdown"
     },
-    "workbench.colorTheme": "Monokai Pro",
+    "workbench.colorTheme": "Monokai",
     "editor.fontFamily": "Atkinson Hyperlegible, Menlo, Monaco, 'Courier New', monospace",
     "editor.fontSize": 14,
     "markdown-preview-enhanced.codeBlockTheme": "pen-paper-coffee.css",
@@ -74,5 +74,6 @@
 "python.defaultInterpreterPath": "/opt/miniconda3/bin/python",
 "python-envs.defaultEnvManager": "ms-python.python:conda",
 "python-envs.defaultPackageManager": "ms-python.python:conda",
-"terminal.integrated.inheritEnv": false
+"terminal.integrated.inheritEnv": false,
+    "pandoc.pdfOptString": "--pdf-engine=xelatex"
   }

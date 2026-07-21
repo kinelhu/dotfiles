@@ -6,8 +6,8 @@
     "rstudio.keymap.enable": true,
     "workbench.keybindings.rstudioKeybindings": true,
 
-    "editor.fontFamily": "'Monaspace Argon Var'",
-    "editor.fontSize": 12.5,
+    "editor.fontFamily": "'Monaspace Xenon'",
+    "editor.fontSize": 13.5,
     "editor.fontLigatures": "'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08', 'calt', 'dlig', 'liga'",
 
     // Theme
@@ -101,10 +101,13 @@
     "positron.assistant.enable": true,
     "positron.assistant.showTokenUsage.enable": true,
     "github.copilot.nextEditSuggestions.enabled": true,
-    "vscode-office.editorTheme": "Monokai",
     "quarto.render.previewType": "none",
     "workbench.editor.enablePreview": false,
-    "positron.assistant.inlineCompletions.enable": {
+    "vscode-office.editorTheme": "Light",
+    "positron.quarto.inlineOutput.enabled": true,
+    "github.copilot.enable": {
         "*": false
-    }
+    },
+    "terminal.integrated.fontFamily": "monospace",
+    "editor.lineHeight": 1.5
 }

@@ -2,6 +2,16 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "mdpdf",
+      "detail": "Compile current .md to PDF using article-kinan defaults (xelatex + bibliography)",
+      "type": "shell",
+      "command": "pandoc '${file}' --defaults article-kinan -o '${fileDirname}/${fileBasenameNoExtension}.pdf'",
+      "options": { "shell": { "executable": "zsh", "args": ["-i", "-c"] } },
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "problemMatcher": []
+    },
+    {
       "label": "mdslides",
       "detail": "Compile current .md to Beamer PDF",
       "type": "shell",
