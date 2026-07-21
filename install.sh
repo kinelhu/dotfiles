@@ -79,7 +79,8 @@ else
 fi
 
 if [ -d "$HOME/Library/Application Support/Positron/User" ]; then
-    create_symlink "$DOTFILES_DIR/vscode/tasks.json" "$HOME/Library/Application Support/Positron/User/tasks.json"
+    create_symlink "$DOTFILES_DIR/vscode/tasks.json"       "$HOME/Library/Application Support/Positron/User/tasks.json"
+    create_symlink "$DOTFILES_DIR/vscode/keybindings.json" "$HOME/Library/Application Support/Positron/User/keybindings.json"
 fi
 
 # Positron settings
