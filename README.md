@@ -17,6 +17,7 @@ My personal configuration for macOS — terminal, editors, apps, and packages.
 | **Pandoc** | templates, defaults, filters, themes → `~/.local/share/pandoc/` | Symlink (whole dirs) |
 | **Homebrew** | `Brewfile` (formulae + casks) | Generated on sync |
 | **oh-my-zsh** | Plugins + Dracula theme | Git submodules |
+| **decktape** | `alias decktape` + `PUPPETEER_EXECUTABLE_PATH` dans `.zshrc` | Via symlink `.zshrc` |
 
 > **Symlinked** files are live — edits in the app instantly update the git repo with no copying needed.
 
@@ -46,6 +47,10 @@ cd ~/.dotfiles
 >   cd ~/.vscode/extensions/mdmath && npm install
 >   ```
 > - **RevealJS theme**: copy `~/.local/share/pandoc/themes/revealjs/theme-kinan.scss` to each new presentation project (Quarto requires the SCSS alongside the `.qmd`).
+> - **decktape (PDF export RevealJS)**: l'alias `decktape` est dans `.zshrc` mais le binaire Chrome doit être installé séparément :
+>   ```bash
+>   npx puppeteer browsers install chrome
+>   ```
 
 ---
 
