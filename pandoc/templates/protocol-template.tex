@@ -1,7 +1,8 @@
-% Anthropic Style Pandoc Template for R Markdown
-% Portrait orientation with single-column layout
+% Protocol / Grant Proposal Pandoc Template
+% Derived from stats-report-template.tex
+% Differences: A4 paper, 2.5cm margins, section numbering enabled, TOC depth 3, French TOC default
 
-\documentclass[10pt]{article}
+\documentclass[11pt]{article}
 
 % =============================================================================
 % PACKAGES
@@ -11,7 +12,7 @@
 \usepackage{geometry}
 \usepackage{xcolor}
 \usepackage{graphicx}
-\usepackage{grffile} % Helps handle spaces and special characters in filenames
+\usepackage{grffile}
 \usepackage{fancyhdr}
 \usepackage{titlesec}
 \usepackage{tcolorbox}
@@ -27,9 +28,7 @@
 \usepackage{float}
 \usepackage{colortbl}
 \usepackage{pdflscape}
-% \usepackage{tabu}          % broken in TeX Live 2021+ — not needed for pandoc tables
 \usepackage{threeparttable}
-% \usepackage{threeparttablex} % depends on tabu
 \usepackage[normalem]{ulem}
 \usepackage{makecell}
 \usepackage{multicol}
@@ -39,7 +38,6 @@
 \hypersetup{
   bookmarksopen=true,
   bookmarksopenlevel=2,
-  pdftitle={LLM Sycophancy Study},
   colorlinks=false
 }
 \usepackage{tikz}
@@ -53,17 +51,17 @@ $if(highlighting-macros)$
 $highlighting-macros$
 $endif$
 
-% Max-width command for figures (scales down if too large, leaves small figures alone)
+% Max-width command for figures
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
 \makeatother
 
-% Font size shorthands (use inside \begingroup...\endgroup)
+% Font size shorthands
 \newcommand{\smsize}{\fontsize{9}{11}\selectfont}
 \newcommand{\fnsize}{\fontsize{8}{10}\selectfont}
 \newcommand{\sssize}{\fontsize{7}{9}\selectfont}
 
-% Font size environments (for ::: {.smtext} etc.)
+% Font size environments
 \newenvironment{smtext}{\fontsize{9}{11}\selectfont}{}
 \newenvironment{fntext}{\fontsize{8}{10}\selectfont}{}
 \newenvironment{sstext}{\fontsize{7}{9}\selectfont}{}
@@ -72,8 +70,7 @@ $endif$
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 
-% Pandoc 3.x image sizing (bounds images to available width/height)
-% Auto-center explicit-width images; flag prevents double-centering inside \pandocbounded
+% Pandoc 3.x image sizing
 \newif\ifinpandocbounded
 \let\RawIncludegraphics\includegraphics
 \renewcommand{\includegraphics}[2][]{%
@@ -95,19 +92,14 @@ $endif$
 % Map Pandoc divs to LaTeX environments
 \newcommand{\BeginKbd}[1]{\begin{#1}}
 \newcommand{\EndKbd}[1]{\end{#1}}
-% For fenced divs like ::: {.highlightbox}
 \let\HighlightboxStart\highlightbox
 \let\HighlightboxEnd\endhighlightbox
-% Aliases for backward compatibility
 \let\KeyfindingsStart\highlightbox
 \let\KeyfindingsEnd\endhighlightbox
 \let\ExecsummaryStart\highlightbox
 \let\ExecsummaryEnd\endhighlightbox
 \let\MethodboxStart\highlightbox
 \let\MethodboxEnd\endhighlightbox
-
-% Let kable tables stay small and fit in columns
-% Don't use longtable redefinition - causes issues
 
 % Pandoc CSL references (pandoc 3.x)
 $if(csl-refs)$
@@ -149,7 +141,6 @@ $endif$
 % =============================================================================
 \usepackage{fontspec}
 
-% Set Inter as main font (installed in system)
 \setmainfont{Inter}[
   UprightFont = *-Regular,
   BoldFont = *-Bold,
@@ -173,63 +164,51 @@ $endif$
 % COLOR DEFINITIONS
 % =============================================================================
 
-% Seeds — only these 3 values need changing to switch the theme.
-% Everything else is derived automatically via xcolor.
-\definecolor{AccentPrimary}{HTML}{27A9BC}   % main accent  (default: 0D7377)
-\definecolor{AlertOrange}{HTML}{284BBD}     % warnings / errors (default: C0550A)
-\definecolor{ExampleGreen}{HTML}{28BD9F}    % success / positive (default: 1A6B3C)
+\definecolor{AccentPrimary}{HTML}{27A9BC}
+\definecolor{AlertOrange}{HTML}{284BBD}
+\definecolor{ExampleGreen}{HTML}{28BD9F}
 
-% Derived from AccentPrimary
 \colorlet{AccentDark}{AccentPrimary!60!black}
 \colorlet{AccentLight}{AccentPrimary!7!white}
 \colorlet{CalloutBg}{AccentPrimary!6!white}
 \colorlet{CalloutBorder}{AccentPrimary!50!white}
 
-% Neutrals (independent of accent)
 \colorlet{PageBackground}{white}
 \colorlet{TextPrimary}{black!90}
 \colorlet{TextSecondary}{black!42}
 \colorlet{TextTertiary}{black!38}
 \colorlet{BorderLight}{black!12}
 
-% Code syntax
 \colorlet{CodeBg}{black!4}
 \colorlet{CodeText}{black!85}
 \colorlet{CodeKeyword}{AccentPrimary}
 \colorlet{CodeString}{ExampleGreen!60!black}
 \colorlet{CodeComment}{black!55}
 
-% Semantic aliases
 \colorlet{SuccessGreen}{ExampleGreen!60!black}
 \colorlet{ErrorRed}{AlertOrange}
-
-% Legacy names for backward compatibility
 \colorlet{CoralPrimary}{AccentPrimary}
 \colorlet{CoralLight}{AccentLight}
 \colorlet{CoralDark}{AccentDark}
 
 % =============================================================================
-% PAGE SETUP
+% PAGE SETUP — A4
 % =============================================================================
 \geometry{
-  paperwidth=8.5in,     % US Letter width (portrait)
-  paperheight=11in,     % US Letter height (portrait)
+  a4paper,
   top=2.5cm,
   bottom=2.5cm,
-  left=3cm,
-  right=3cm
+  left=2.5cm,
+  right=2.5cm
 }
 
-% Set page background color (white)
 \pagecolor{PageBackground}
 \color{TextPrimary}
 
-% Text formatting - compact for more content
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.5em}
 \renewcommand{\baselinestretch}{1.15}
 
-% Justified text
 \usepackage{ragged2e}
 \justifying
 
@@ -241,6 +220,7 @@ $endif$
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0.5pt}
 \renewcommand{\footrule}{\hbox to\headwidth{\color{BorderLight}\leaders\hrule height \footrulewidth\hfill}}
+
 % Left: footer-hide-left suppresses | footer-left overrides | default: version+date
 $if(footer-hide-left)$
 $else$
@@ -276,38 +256,35 @@ $endif$
 $endif$
 
 % =============================================================================
-% TITLE FORMATTING
+% TITLE & SECTION FORMATTING
 % =============================================================================
 
-% Section styling
 \titleformat{\section}
   {\Large\bfseries\color{AccentPrimary}}
-  {}
+  {\thesection\quad}
   {0em}
   {}
 
 \titleformat{\subsection}
   {\large\bfseries\color{TextPrimary}}
-  {}
+  {\thesubsection\quad}
   {0em}
   {}
 
 \titleformat{\subsubsection}
   {\normalsize\bfseries\color{TextSecondary}}
-  {}
+  {\thesubsubsection\quad}
   {0em}
   {}
 
-% Adjust spacing - compact for more content
-\titlespacing*{\section}{0pt}{1em}{0.5em}
-\titlespacing*{\subsection}{0pt}{0.8em}{0.4em}
-\titlespacing*{\subsubsection}{0pt}{0.6em}{0.3em}
+\titlespacing*{\section}{0pt}{1.2em}{0.6em}
+\titlespacing*{\subsection}{0pt}{1em}{0.4em}
+\titlespacing*{\subsubsection}{0pt}{0.8em}{0.3em}
 
 % =============================================================================
 % CUSTOM ENVIRONMENTS
 % =============================================================================
 
-% Callout Box - elegant design
 \newtcolorbox{calloutbox}{
   breakable,
   enhanced,
@@ -327,8 +304,6 @@ $endif$
   fontupper=\small
 }
 
-% Single modular highlight box with optional title
-% Usage: \begin{highlightbox}[Title] or \begin{highlightbox} (no title)
 \newtcolorbox{highlightbox}[1][]{
   breakable,
   enhanced jigsaw,
@@ -346,7 +321,6 @@ $endif$
   before upper={\ifx\relax#1\relax\else{\large\bfseries\color{AccentPrimary}#1}\par\medskip\fi}
 }
 
-% Blockquote styling (Pandoc > in markdown)
 \renewenvironment{quote}{%
   \begin{tcolorbox}[
     breakable,
@@ -370,15 +344,12 @@ $endif$
   \end{tcolorbox}%
 }
 
-% Aliases for backward compatibility
 \let\keyfindings\highlightbox
 \let\endkeyfindings\endhighlightbox
 \let\execsummary\highlightbox
 \let\endexecsummary\endhighlightbox
 \let\methodbox\highlightbox
 \let\endmethodbox\endhighlightbox
-
-% No figure borders - clean presentation
 
 % =============================================================================
 % CODE BLOCKS
@@ -430,19 +401,6 @@ $else$
 \date{}
 $endif$
 
-% -----------------------------------------------------------------------------
-% Styled table of contents. Invoke \styledtoc anywhere in the Markdown body
-% (with `toc: false`) to place the TOC exactly where you want it — e.g. after a
-% short preface — with the same styling as the automatic `toc: true` version.
-% -----------------------------------------------------------------------------
-\newcommand{\styledtoc}{%
-  {\hypersetup{linkcolor=AccentPrimary}%
-   \setcounter{tocdepth}{2}%
-   \setlength{\parskip}{0pt}%
-   \begin{spacing}{0.8}\tableofcontents\end{spacing}%
-   \vspace{1em}}%
-  \newpage}
-
 % =============================================================================
 % DOCUMENT BODY
 % =============================================================================
@@ -457,7 +415,7 @@ $endif$
 $if(toc-title)$
   \renewcommand{\contentsname}{\color{AccentPrimary}\Large $toc-title$}
 $else$
-  \renewcommand{\contentsname}{\color{AccentPrimary}\Large Contents}
+  \renewcommand{\contentsname}{\color{AccentPrimary}\Large Table des matières}
 $endif$
 
 $if(abstract)$
@@ -467,11 +425,20 @@ $abstract$
 \vspace{1em}
 $endif$
 
-% Disable section numbering (keeps TOC and body consistent)
-\setcounter{secnumdepth}{0}
+% Section numbering enabled (depth 3: section / subsection / subsubsection)
+\setcounter{secnumdepth}{3}
 
 $if(toc)$
-\styledtoc
+{
+\hypersetup{linkcolor=AccentPrimary}
+\setcounter{tocdepth}{3}
+\setlength{\parskip}{0pt}
+\begin{spacing}{0.8}
+\tableofcontents
+\end{spacing}
+\vspace{1em}
+}
+\newpage
 $endif$
 
 $body$
