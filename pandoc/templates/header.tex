@@ -1,26 +1,21 @@
-% Study document styling
-\usepackage{fontspec}
+% Study document styling — for bare .qmd/.Rmd via `include-in-header`.
+% Shared look lives in house-style.tex; this file adds doc-level geometry/lists.
 \usepackage[margin=2.5cm,footskip=0.25in]{geometry}
 \usepackage{graphicx}
 \usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
 \usepackage{enumitem}
 \usepackage{parskip}
 \usepackage{titlesec}
-\usepackage{xcolor}
+\usepackage[table]{xcolor}   % [table] enables zebra (\rowcolors) used by house-style
 
-\usepackage{longtable}
-\usepackage{array}
+% Shared house style: Inter body, palette, Monaspace Xenon \HeaderFont, table style
+\input{/Users/kinelhu/.dotfiles/pandoc/templates/house-style.tex}
 
-% Set Atkinson Hyperlegible font if available
-\IfFontExistsTF{Inter}{\setmainfont{Inter}}{}
+% Section formatting — house palette + Xenon header font (H1/H2 mono; H3 stays Inter)
+\titleformat{\section}{\large\HeaderFont\color{AccentPrimary}}{\thesection}{1.5em}{}
+\titleformat{\subsection}{\normalsize\HeaderFont\color{TextPrimary}}{\thesubsection}{1.5em}{}
 
-% Section formatting
-\titleformat{\section}{\large\bfseries\color{blue!60!black}}{\thesection}{1.5em}{}
-\titleformat{\subsection}{\normalsize\bfseries\color{teal}}{\thesubsection}{1.5em}{}
-
-% Reduce spacing
-% \titlespacing*{\section}{0pt}{8pt}{4pt}
-% \titlespacing*{\subsection}{0pt}{6pt}{3pt}
-
-% List formatting 
+% List formatting
 \setlist{noitemsep,topsep=4pt}

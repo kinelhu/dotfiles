@@ -260,13 +260,13 @@ $endif$
 % =============================================================================
 
 \titleformat{\section}
-  {\Large\bfseries\color{AccentPrimary}}
+  {\Large\HeaderFont\color{AccentPrimary}}
   {\thesection\quad}
   {0em}
   {}
 
 \titleformat{\subsection}
-  {\large\bfseries\color{TextPrimary}}
+  {\large\HeaderFont\color{TextPrimary}}
   {\thesubsection\quad}
   {0em}
   {}
@@ -404,6 +404,9 @@ $endif$
 % =============================================================================
 % DOCUMENT BODY
 % =============================================================================
+
+% House style: fonts (Inter + Monaspace Xenon headers), palette, table style.
+\input{/Users/kinelhu/.dotfiles/pandoc/templates/house-style.tex}
 
 \begin{document}
 

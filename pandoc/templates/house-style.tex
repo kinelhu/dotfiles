@@ -1,0 +1,49 @@
+% =============================================================================
+% house-style.tex — shared PDF/xelatex house style (single source of truth)
+% -----------------------------------------------------------------------------
+% Owns: body font (Inter), palette, the \HeaderFont command (Monaspace Xenon Bold
+% for section/subsection headers, with graceful fallback), and the table style
+% (teal rules + air + light zebra, scoped to pandoc longtables).
+%
+% Each document keeps its OWN \titleformat (numbering/hierarchy differ per template)
+% and simply uses \HeaderFont as the header font token. Pulled in by:
+%   - templates/protocol-template.tex      (\input, before \begin{document})
+%   - templates/stats-report-template.tex  (\input, before \begin{document})
+%   - header.tex                           (include-in-header for bare .qmd/.Rmd)
+%
+% Requires xelatex. Idempotent + self-contained (safe even if the host preamble
+% already sets some of this). Fonts degrade gracefully when not installed.
+% =============================================================================
+\usepackage{fontspec}
+\usepackage{colortbl}   % \arrayrulecolor, \rowcolor — independent of xcolor[table]
+\usepackage{etoolbox}
+
+% ── Palette ──────────────────────────────────────────────────────────────────
+\definecolor{AccentPrimary}{HTML}{27A9BC}
+\definecolor{TextPrimary}{HTML}{1A1A1A}
+\definecolor{TextSecondary}{HTML}{949494}
+\colorlet{AccentLight}{AccentPrimary!8!white}
+
+% ── Fonts ────────────────────────────────────────────────────────────────────
+% Body: Inter if installed (else leave the document default untouched).
+\IfFontExistsTF{Inter}{\setmainfont{Inter}}{}
+% Headers: Monaspace Xenon Bold (slab mono) → else Inter SemiBold → else \bfseries.
+% Negative tracking tightens the wide monospaced glyphs at heading sizes.
+\IfFontExistsTF{Monaspace Xenon Bold}{%
+  \newfontfamily\HeaderFont{Monaspace Xenon Bold}[LetterSpace=-3.0]%
+}{%
+  \IfFontExistsTF{Inter}%
+    {\newfontfamily\HeaderFont{Inter}[UprightFont={Inter SemiBold}]}%
+    {\providecommand{\HeaderFont}{\bfseries}}%
+}
+
+% ── Tables — Variant A: teal rules, air, light zebra ─────────────────────────
+% Scoped to longtable (pandoc's table environment) so layout tabulars, title
+% blocks and headers/footers are untouched. Zebra is guarded: it needs
+% xcolor's [table] option (\rowcolors); if unavailable, rules + air still apply.
+\AtBeginEnvironment{longtable}{%
+  \arrayrulecolor{AccentPrimary}%
+  \renewcommand{\arraystretch}{1.25}%
+  \setlength{\tabcolsep}{8pt}%
+  \ifdefined\rowcolors\rowcolors{2}{}{AccentLight}\fi
+}
