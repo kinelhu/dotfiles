@@ -61,6 +61,8 @@ create_symlink "$DOTFILES_DIR/pandoc/templates" "$HOME/.local/share/pandoc/templ
 create_symlink "$DOTFILES_DIR/pandoc/defaults"  "$HOME/.local/share/pandoc/defaults"
 create_symlink "$DOTFILES_DIR/pandoc/filters"   "$HOME/.local/share/pandoc/filters"
 create_symlink "$DOTFILES_DIR/pandoc/themes"    "$HOME/.local/share/pandoc/themes"
+create_symlink "$DOTFILES_DIR/pandoc/make-reference-doc.py" "$HOME/.local/share/pandoc/make-reference-doc.py"
+create_symlink "$DOTFILES_DIR/pandoc/reference.docx"        "$HOME/.local/share/pandoc/reference.docx"
 
 # Alfred preferences (macOS only)
 if [ -d "$HOME/Library/Application Support/Alfred" ]; then
