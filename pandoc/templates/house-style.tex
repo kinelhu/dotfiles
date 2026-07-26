@@ -27,10 +27,10 @@
 % ── Fonts ────────────────────────────────────────────────────────────────────
 % Body: Inter if installed (else leave the document default untouched).
 \IfFontExistsTF{Inter}{\setmainfont{Inter}}{}
-% Headers: Monaspace Xenon Bold (slab mono) → else Inter SemiBold → else \bfseries.
+% Headers: Monaspace Neon ExtraBold (neo-grotesque mono) → else Inter SemiBold → else \bfseries.
 % Negative tracking tightens the wide monospaced glyphs at heading sizes.
-\IfFontExistsTF{Monaspace Xenon Bold}{%
-  \newfontfamily\HeaderFont{Monaspace Xenon Bold}[LetterSpace=-3.0]%
+\IfFontExistsTF{Monaspace Neon ExtraBold}{%
+  \newfontfamily\HeaderFont{Monaspace Neon ExtraBold}[LetterSpace=-3.0]%
 }{%
   \IfFontExistsTF{Inter}%
     {\newfontfamily\HeaderFont{Inter}[UprightFont={Inter SemiBold}]}%
@@ -43,7 +43,12 @@
 % xcolor's [table] option (\rowcolors); if unavailable, rules + air still apply.
 \AtBeginEnvironment{longtable}{%
   \arrayrulecolor{AccentPrimary}%
-  \renewcommand{\arraystretch}{1.25}%
+  \renewcommand{\arraystretch}{1.35}%
   \setlength{\tabcolsep}{8pt}%
+  % Let row shading meet the rules: booktabs' default rule-separation is
+  % uncolored whitespace, which otherwise leaves a white gap above/below the
+  % teal lines. Interior padding comes from \arraystretch instead.
+  \setlength{\aboverulesep}{0pt}%
+  \setlength{\belowrulesep}{0pt}%
   \ifdefined\rowcolors\rowcolors{2}{}{AccentLight}\fi
 }
