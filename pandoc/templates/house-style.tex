@@ -41,14 +41,14 @@
 % Scoped to longtable (pandoc's table environment) so layout tabulars, title
 % blocks and headers/footers are untouched. Zebra is guarded: it needs
 % xcolor's [table] option (\rowcolors); if unavailable, rules + air still apply.
+% Teal rules + air (no zebra). Zebra was dropped deliberately: \rowcolors/colortbl
+% always overhangs the row shading by \tabcolsep, and pandoc's @{}-bounded tables
+% make the rules content-width, so the bands can't sit flush with the rules — they
+% overflow left/right. Flush banded rows need tabularray (via a Lua filter), not
+% colortbl. Teal rules + generous row height give a clean house look with zero
+% artifacts, on every table width and in every template.
 \AtBeginEnvironment{longtable}{%
   \arrayrulecolor{AccentPrimary}%
-  \renewcommand{\arraystretch}{1.35}%
+  \renewcommand{\arraystretch}{1.4}%
   \setlength{\tabcolsep}{8pt}%
-  % Let row shading meet the rules: booktabs' default rule-separation is
-  % uncolored whitespace, which otherwise leaves a white gap above/below the
-  % teal lines. Interior padding comes from \arraystretch instead.
-  \setlength{\aboverulesep}{0pt}%
-  \setlength{\belowrulesep}{0pt}%
-  \ifdefined\rowcolors\rowcolors{2}{}{AccentLight}\fi
 }
