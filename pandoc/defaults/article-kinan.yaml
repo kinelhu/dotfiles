@@ -7,3 +7,5 @@ template: /Users/kinelhu/.local/share/pandoc/templates/stats-report-template.tex
 citeproc: true
 bibliography:
   - /Users/kinelhu/Zotero/bibs/full-zotero-library.json
+filters:
+  - /Users/kinelhu/.local/share/pandoc/filters/table-header-font.lua
