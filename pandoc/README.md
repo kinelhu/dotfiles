@@ -37,6 +37,43 @@ Compiles a Markdown file to a **Word document** using `docx-kinan.yaml`.
 
 ---
 
+## Book / essai (`book-kinan`)
+
+For long-form literary work (essays, books) — distinct from `article-kinan`,
+which is tuned for the branded academic/stats-report house style.
+
+```bash
+pandoc file.md --defaults book-kinan -o book.pdf
+```
+
+**Requires `lualatex`** (not xelatex) — `luaotfload` finds EB Garamond
+directly in the TeX Live tree, so nothing needs to be installed into Font
+Book.
+
+Design:
+- `book` class, `\frontmatter`/`\mainmatter`, 6×9in trim by default
+  (override with a `geometry:` metadata field).
+- Centered chapter titles with **no LaTeX auto-numbering** — chapter
+  headings must carry whatever numbering you want in the text itself (e.g.
+  `## II. Le socle`), since the template only ever prints the heading text.
+  This also means all chapter headings must sit at the same Markdown level;
+  the default (`shift-heading-level-by: -1`) assumes chapters are `##`.
+- Running heads: chapter title on verso pages, book title on recto.
+- Markdown footnotes (`[^1]`) render as **endnotes, flushed and renumbered
+  after each chapter** (via the `endnotes` package + an `etoolbox` hook on
+  `\chapter`), not end-of-book or bottom-of-page.
+- Optional, not auto-applied: `\dropcap{X}{rest of word}` (drop cap, via
+  `lettrine`) and `\epigraph{quote}{attribution}` — insert as raw LaTeX in
+  the Markdown source where wanted.
+
+Multi-chapter books assembled from several files (rather than one big `.md`)
+need their own small build script to concatenate chapters in the *correct*
+order before piping into pandoc — do not glob-sort filenames if they use
+Roman numerals (`IX-` sorts before `V-` as a plain string). See
+`~/Dev/backrooms/build-pdf.sh` for a worked example.
+
+---
+
 ## Beamer slides (`mdslides`)
 
 ### Syntax reference

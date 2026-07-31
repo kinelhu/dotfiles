@@ -1,0 +1,301 @@
+% Book / essai template — classic literary layout
+% Engine: LuaLaTeX (required — luaotfload finds EB Garamond straight out of
+% TeX Live without installing anything into Font Book).
+% documentclass: book, \frontmatter/\mainmatter, per-chapter endnotes.
+%
+% Chapter titles are NOT auto-numbered by LaTeX: this template assumes the
+% source headings already carry whatever numbering the author wants in the
+% text itself (e.g. "## II. Le socle"), so \chapter only ever displays the
+% heading text, centered, with no "Chapitre N" label. Unnumbered chapters
+% (Introduction, Coda...) just work with no extra markup.
+
+\documentclass[11pt,twoside,openright]{book}
+
+% =============================================================================
+% FONTS & LANGUAGE
+% =============================================================================
+\usepackage{iftex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0
+  \PackageError{book-template}{This template requires XeLaTeX or LuaLaTeX}{Set pdf-engine: lualatex in your defaults file.}
+\fi
+
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setmainlanguage[]{french}
+
+\setmainfont{EB Garamond}[
+  Numbers = OldStyle,
+  Ligatures = TeX
+]
+\newfontfamily\chapterfont{EB Garamond}[Numbers=OldStyle]
+\newfontfamily\runningheadfont{EB Garamond}
+
+\usepackage{microtype}
+
+% =============================================================================
+% PAGE GEOMETRY
+% =============================================================================
+$if(geometry)$
+\usepackage{geometry}
+\geometry{$for(geometry)$$geometry$$sep$,$endfor$}
+$else$
+\usepackage{geometry}
+\geometry{
+  paperwidth=6in,
+  paperheight=9in,
+  inner=2.6cm,
+  outer=2cm,
+  top=2.3cm,
+  bottom=2.6cm,
+  bindingoffset=0.3cm
+}
+$endif$
+
+\usepackage{xcolor}
+\definecolor{InkPrimary}{HTML}{1A1A1A}
+\definecolor{InkSecondary}{HTML}{6B6B6B}
+\definecolor{RuleGray}{HTML}{B0B0B0}
+\color{InkPrimary}
+
+\setlength{\parindent}{1.2em}
+\setlength{\parskip}{0pt}
+\renewcommand{\baselinestretch}{1.12}
+
+% =============================================================================
+% RUNNING HEADS
+% =============================================================================
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\renewcommand{\headrule}{\color{RuleGray}\hrule height\headrulewidth}
+\fancyhead[LE]{\runningheadfont\small\itshape\color{InkSecondary}\leftmark}
+\fancyhead[RO]{\runningheadfont\small\itshape\color{InkSecondary}$if(title)$$title$$endif$}
+\fancyfoot[LE,RO]{\runningheadfont\small\color{InkSecondary}\thepage}
+% Chapter-opening pages use LaTeX's plain-vanilla \pagestyle{plain} (blank
+% head, centered footer page number) — the classic book convention. Do NOT
+% redefine it via \fancypagestyle{plain}{\fancyhf{}...}: invoking \fancyhf{}
+% there clobbers the fancy style's own head/foot storage globally the next
+% time a chapter-opening page is typeset, silently blanking every running
+% head for the rest of the document.
+
+% =============================================================================
+% CHAPTER TITLE STYLE — centered, no auto-number, thin rule below
+% =============================================================================
+\usepackage{titlesec}
+
+\titleformat{\chapter}[display]
+  {\centering\chapterfont}
+  {}
+  {0pt}
+  {\Large\MakeUppercase}
+  [\vspace{0.4em}{\color{RuleGray}\titlerule[0.4pt]}]
+
+\titlespacing*{\chapter}{0pt}{2.5cm}{1.5cm}
+
+\titleformat{\section}
+  {\chapterfont\large\itshape}
+  {}
+  {0pt}
+  {}
+\titlespacing*{\section}{0pt}{1.4em}{0.6em}
+
+\titleformat{\subsection}
+  {\chapterfont\normalsize\bfseries}
+  {}
+  {0pt}
+  {}
+\titlespacing*{\subsection}{0pt}{1.1em}{0.4em}
+
+% Chapter numbers are hand-typed into the heading text by the author (e.g.
+% "II. Le socle"), so LaTeX's own chapter counter is never displayed — not
+% in the running \chapter title (titleformat above already omits it) and
+% not in the table of contents (secnumdepth<0 removes the \numberline too).
+\setcounter{secnumdepth}{-1}
+
+% =============================================================================
+% OPTIONAL LITERARY DEVICES — available, not auto-applied
+% =============================================================================
+% Drop cap for a chapter's opening word, invoked manually in the markdown as
+% raw LaTeX: \dropcap{I}{l existe un lieu...}
+\usepackage{lettrine}
+\newcommand{\dropcap}[2]{\lettrine[lines=3,findent=0.1em,nindent=0pt]{#1}{#2}}
+
+% Epigraph, invoked manually as raw LaTeX right after a chapter heading:
+% \epigraph{quotation}{--- attribution}
+\usepackage{epigraph}
+\setlength{\epigraphwidth}{0.7\textwidth}
+\renewcommand{\epigraphflush}{flushright}
+\renewcommand{\epigraphrule}{0pt}
+\renewcommand{\textflush}{flushright}
+
+% =============================================================================
+% PER-CHAPTER ENDNOTES
+% =============================================================================
+% Markdown footnotes ([^1]) become \endnote instead of \footnote, and are
+% flushed automatically right before each new \chapter starts (and once more
+% at the very end, via \flushendnotes before \end{document}).
+\usepackage{endnotes}
+\let\footnote=\endnote
+\renewcommand{\notesname}{Notes}
+\renewcommand{\enotesize}{\small}
+\definecolor{EndnoteRule}{HTML}{B0B0B0}
+\renewcommand{\enoteheading}{%
+  \vspace{1.5em}
+  {\color{EndnoteRule}\titlerule[0.4pt]}
+  \vspace{0.6em}
+  \noindent{\chapterfont\itshape\notesname}\par
+  \mbox{}\par\vskip-\baselineskip
+}
+
+\usepackage{etoolbox}
+\pretocmd{\chapter}{%
+  \ifnum\value{endnote}>0
+    {\theendnotes}
+    \setcounter{endnote}{0}
+  \fi
+}{}{}
+\newcommand{\flushendnotes}{%
+  \ifnum\value{endnote}>0
+    {\theendnotes}
+    \setcounter{endnote}{0}
+  \fi
+}
+
+% =============================================================================
+% PANDOC REQUIREMENTS (tightlist, images, syntax highlighting, CSL refs)
+% =============================================================================
+$if(highlighting-macros)$
+$highlighting-macros$
+$endif$
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\usepackage{graphicx}
+\usepackage{grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\makeatother
+\usepackage{adjustbox}
+\newif\ifinpandocbounded
+\let\RawIncludegraphics\includegraphics
+\renewcommand{\includegraphics}[2][]{%
+  \ifinpandocbounded
+    \RawIncludegraphics[#1]{#2}%
+  \else
+    \begin{center}\RawIncludegraphics[#1]{#2}\end{center}%
+  \fi
+}
+\def\pandocbounded#1{%
+  \inpandocboundedtrue
+  \begin{center}\adjustbox{max width=\linewidth, max totalheight=0.9\textheight}{#1}\end{center}%
+  \inpandocboundedfalse
+}
+
+$if(csl-refs)$
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+  \let\@cite@ofmt\@firstofone
+  \def\@biblabel#1{}
+  \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newlength{\cslentryspacing}
+\setlength{\cslentryspacing}{0em}
+\newenvironment{CSLReferences}[2]
+ {\begin{thebibliography}{99}%
+  \setlength{\itemindent}{0pt}%
+  \setlength{\leftmargin}{0pt}%
+  \setlength{\parsep}{0pt}%
+  \ifodd #1
+    \setlength{\leftmargin}{\cslhangindent}%
+    \setlength{\itemindent}{-\cslhangindent}%
+  \fi
+  \setlength{\itemsep}{#2\cslentryspacing}}
+ {\end{thebibliography}}
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+$endif$
+
+% =============================================================================
+% HYPERREF (kept quiet — no colour boxes, no visible link styling)
+% =============================================================================
+\usepackage[hidelinks,bookmarksdepth=2]{hyperref}
+\hypersetup{
+  pdftitle={$title$},
+  pdfauthor={$for(author)$$author$$sep$, $endfor$},
+  colorlinks=false,
+  bookmarksopen=false
+}
+
+% =============================================================================
+% TITLE BLOCK
+% =============================================================================
+$if(title)$
+\title{$title$}
+$endif$
+$if(author)$
+\author{$for(author)$$author$$sep$ \and $endfor$}
+$endif$
+$if(date)$
+\date{$date$}
+$else$
+\date{}
+$endif$
+
+\begin{document}
+
+\frontmatter
+\pagestyle{plain}
+
+$if(title)$
+\begin{titlepage}
+\begin{center}
+\vspace*{0.15\textheight}
+{\chapterfont\Large\MakeUppercase{$title$}\par}
+$if(subtitle)$
+\vspace{0.8em}
+{\chapterfont\large\itshape\color{InkSecondary}$subtitle$\par}
+$endif$
+\vspace{2.5em}
+{\color{RuleGray}\rule{0.2\textwidth}{0.4pt}\par}
+\vfill
+$if(author)$
+{\runningheadfont\normalsize $for(author)$$author$$sep$ \and $endfor$\par}
+\vspace{0.5em}
+$endif$
+$if(date)$
+{\runningheadfont\small\color{InkSecondary}$date$\par}
+$endif$
+\vspace{2em}
+\end{center}
+\end{titlepage}
+$endif$
+
+$if(toc)$
+{
+\renewcommand{\contentsname}{$if(toc-title)$$toc-title$$else$Table des matières$endif$}
+\hypersetup{linkcolor=InkPrimary}
+\setcounter{tocdepth}{$if(toc-depth)$$toc-depth$$else$1$endif$}
+\tableofcontents
+}
+\clearpage
+$endif$
+
+\mainmatter
+\pagestyle{fancy}
+
+$body$
+
+\flushendnotes
+
+\end{document}
