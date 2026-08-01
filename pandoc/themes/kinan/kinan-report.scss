@@ -1,0 +1,59 @@
+/*-- scss:defaults --*/
+// kinan-report.scss — Quarto html theme for long-form reports.
+// Bootstrap variable overrides layered on a bootswatch base (see
+// _extension.yml: theme: [cosmo, kinan-report.scss]). Mirrors the PDF house
+// style (house-style.tex / stats-report-template.tex): AccentPrimary teal,
+// Monaspace Neon ExtraBold headings, Inter body, flush zebra tables.
+
+$accent-primary: #27A9BC !default;
+$text-primary:   #1A1A1A !default;
+$text-secondary: #949494 !default;
+$accent-light:   rgba(39, 169, 188, 0.08) !default;
+
+$body-color:    $text-primary !default;
+$link-color:    $accent-primary !default;
+$primary:       $accent-primary !default;
+
+$font-family-sans-serif: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif !default;
+$headings-font-family:   "Monaspace Neon", "Menlo", "SFMono-Regular", monospace !default;
+$headings-font-weight:   800 !default;
+$headings-color:         $accent-primary !default;
+
+$toc-color:        $accent-primary !default;
+$toc-active-border: $accent-primary !default;
+
+/*-- scss:rules --*/
+
+// Headings: only the top level gets the full accent treatment, mirroring
+// stats-report-template.tex's \titleformat (h1 teal, h2 dark, h3+ plain).
+h1 { color: $accent-primary; font-weight: $headings-font-weight; }
+h2 { color: $text-primary; font-weight: $headings-font-weight; }
+h3, h4, h5, h6 { color: $text-primary; font-family: $font-family-sans-serif; font-weight: 700; }
+
+// ----- Tables: teal rules + flush zebra (matches table-zebra.lua's PDF output) -----
+.table {
+  border-top: 1px solid $accent-primary;
+  border-bottom: 1px solid $accent-primary;
+
+  thead th {
+    border-bottom: 1px solid $accent-primary;
+    font-family: $headings-font-family;
+    font-weight: 700;
+  }
+
+  tbody tr:nth-child(even) > * {
+    background-color: $accent-light;
+  }
+
+  th, td { border-color: transparent; }
+}
+
+// ----- Table of contents -----
+#TOC {
+  a { color: $text-primary; }
+  a.active { color: $accent-primary; font-weight: 600; }
+}
+
+// ----- Code -----
+code { color: $accent-primary; }
+pre code { color: inherit; }

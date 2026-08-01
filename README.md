@@ -46,7 +46,7 @@ cd ~/.dotfiles
 >   git clone https://github.com/goessner/mdmath.git ~/.vscode/extensions/mdmath
 >   cd ~/.vscode/extensions/mdmath && npm install
 >   ```
-> - **RevealJS theme**: copy `~/.local/share/pandoc/themes/revealjs/theme-kinan.scss` to each new presentation project (Quarto requires the SCSS alongside the `.qmd`).
+> - **Quarto house style** (slides + long-form `.qmd`): Quarto only resolves extensions from a project-local `_extensions/` folder, so each new Quarto project needs `~/.dotfiles/pandoc/link-quarto-house-style.sh` run once inside it — see `pandoc/README.md`.
 > - **decktape (PDF export RevealJS)**: l'alias `decktape` est dans `.zshrc` mais le binaire Chrome doit être installé séparément :
 >   ```bash
 >   npx puppeteer browsers install chrome
@@ -104,18 +104,30 @@ source ~/.zshrc
 │   ├── profile.plist            # Readable preferences
 │   └── com.googlecode.iterm2.plist
 ├── pandoc/
-│   ├── README.md                # Full syntax reference (Beamer + RevealJS)
+│   ├── README.md                # Full syntax reference (Beamer + RevealJS + long-form reports)
+│   ├── link-quarto-house-style.sh  # Wire the kinan Quarto extension into a project
 │   ├── defaults/                # → ~/.local/share/pandoc/defaults/
 │   │   ├── slides-kinan.yaml    # Beamer: xelatex, Inter, beamer-header.tex
-│   │   ├── article-kinan.yaml
+│   │   ├── article-kinan.yaml   # mdpdf: house style + zebra tables
+│   │   ├── book-kinan.yaml      # Literary essays/books (lualatex, EB Garamond)
 │   │   └── docx-kinan.yaml
 │   ├── filters/                 # → ~/.local/share/pandoc/filters/
-│   │   ├── beamer-blocks.lua    # alertblock/exampleblock for Beamer
-│   │   └── revealjs-wrap-body.lua  # block divs + .slide-body for RevealJS
+│   │   ├── beamer-blocks.lua       # alertblock/exampleblock for Beamer
+│   │   ├── revealjs-wrap-body.lua  # block divs + .slide-body for RevealJS
+│   │   ├── table-header-font.lua   # Monaspace Neon table headers
+│   │   ├── table-zebra.lua         # flush zebra row banding (tabularray)
+│   │   └── pagebreak.lua
 │   ├── templates/               # → ~/.local/share/pandoc/templates/
-│   │   └── beamer-header.tex    # Colour palette, Inter font, footline, blocks
-│   └── themes/revealjs/
-│       └── theme-kinan.scss     # RevealJS theme (copy to each project)
+│   │   ├── house-style.tex         # shared palette/fonts/tabularray — single source of truth
+│   │   ├── beamer-header.tex       # Beamer palette, footline, blocks
+│   │   ├── stats-report-template.tex  # article-kinan + kinan-pdf base
+│   │   ├── protocol-template.tex
+│   │   └── book-template.tex
+│   └── themes/kinan/            # → ~/.local/share/pandoc/themes/kinan/
+│       ├── _extension.yml          # Quarto extension: kinan-revealjs / -html / -pdf
+│       ├── theme-kinan.scss        # RevealJS theme
+│       ├── kinan-report.scss       # Long-form HTML theme (Quarto)
+│       └── kinan-report.css        # Same, for R Markdown (no Sass compiler)
 └── oh-my-zsh-custom/
     ├── plugins/
     │   ├── zsh-autosuggestions/     (submodule)

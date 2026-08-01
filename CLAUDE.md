@@ -33,8 +33,12 @@ This is a dotfiles repository for managing terminal configuration across multipl
 ├── iterm2/
 │   ├── com.googlecode.iterm2.plist  # Binary plist backup
 │   └── profile.plist                 # Readable plist export
-├── pandoc/
-│   └── header.tex         # Pandoc PDF header template
+├── pandoc/                # Full pipeline: bare .md → PDF/docx, Quarto/.Rmd → PDF/HTML, slides
+│   ├── README.md          # Syntax reference (Beamer, RevealJS, long-form reports)
+│   ├── defaults/          # pandoc --defaults YAML (article/book/docx/slides-kinan)
+│   ├── filters/           # Lua filters (table zebra/header-font, beamer blocks, etc.)
+│   ├── templates/         # LaTeX templates incl. house-style.tex (single source of truth)
+│   └── themes/kinan/      # Quarto extension: kinan-revealjs / -html / -pdf
 └── oh-my-zsh-custom/
     ├── plugins/           # zsh plugins (git submodules)
     │   ├── zsh-autosuggestions/
@@ -315,5 +319,5 @@ cd ~/.dotfiles && git submodule status
 
 ---
 
-**Last Updated**: 2026-02-11
+**Last Updated**: 2026-08-01
 **Maintainer**: Kinan El Husseini

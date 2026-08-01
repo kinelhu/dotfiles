@@ -92,7 +92,8 @@
     "workbench.editorAssociations": {
         "*.xlsx": "cweijan.officeViewer",
         "*.csv": "workbench.editor.positronDataExplorer",
-        "*.pdf": "pdf.preview"
+        "*.pdf": "pdf.preview",
+        "*.md": "default"
     },
     "material-icon-theme.folders.color": "#26a69a",
     "explorer.confirmDragAndDrop": false,
@@ -102,12 +103,16 @@
     "positron.assistant.showTokenUsage.enable": true,
     "github.copilot.nextEditSuggestions.enabled": true,
     "quarto.render.previewType": "none",
-    "workbench.editor.enablePreview": false,
     "vscode-office.editorTheme": "Light",
     "positron.quarto.inlineOutput.enabled": true,
     "github.copilot.enable": {
         "*": false
     },
     "terminal.integrated.fontFamily": "monospace",
-    "editor.lineHeight": 1.5
+    "editor.lineHeight": 1.5,
+    "[markdown]": {
+        "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
+    },
+    "workbench.editor.enablePreview": false,
+    "markdown.extension.tableFormatter.enabled": false
 }

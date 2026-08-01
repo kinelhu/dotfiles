@@ -148,30 +148,50 @@ Text after.
 
 ---
 
-## RevealJS theme (`theme-kinan.scss`)
+## Quarto house style (`pandoc/themes/kinan/`)
 
-For **interactive data presentations** with R (plotly, DT, reactable).
+A single Quarto extension — id **`kinan`** — contributes three formats:
+`kinan-revealjs` (interactive slide decks), `kinan-html` and `kinan-pdf`
+(long-form reports: `.qmd` that aren't slides). One `_extension.yml`, one
+palette, no more copy-pasting the theme file into each project (that's
+exactly how `theme-kinan.scss` drifted out of sync with itself in the past —
+the live copy under `~/.quarto/extensions/` fell behind the one in this repo
+until they were reconciled and symlinked back together).
 
 ### Setup (per project)
 
+Quarto only resolves extensions from a **project-local** `_extensions/`
+folder — there is no working global lookup, even though `~/.quarto/extensions/`
+exists. Run this once per project:
+
 ```bash
-cp ~/.local/share/pandoc/themes/revealjs/theme-kinan.scss .
+~/.dotfiles/pandoc/link-quarto-house-style.sh   # symlinks _extensions/kinan
 ```
 
-**YAML template:**
+Then in any `.qmd`'s frontmatter:
+
 ```yaml
 format:
-  revealjs:
-    theme: [simple, theme-kinan.scss]
-    slide-number: c/t
+  kinan-revealjs: default   # interactive slide deck
+  kinan-html: default       # long-form report, HTML
+  kinan-pdf: default        # long-form report, PDF (stats-report-template.tex + zebra tables)
+```
+
+(Quarto only renders multiple formats at once with `quarto render`, not
+`quarto preview`; use whichever one(s) you need.)
+
+### RevealJS (`kinan-revealjs`) — interactive data presentations
+
+For presentations with R (plotly, DT, reactable).
+
+```yaml
+format:
+  kinan-revealjs:
     transition: none
     fig-align: center
     scrollable: true
     embed-resources: true
     auto-stretch: false
-    progress: true
-    width: 1600
-    height: 900
     navigation-mode: linear
 filters:
   - /Users/kinelhu/.local/share/pandoc/filters/revealjs-wrap-body.lua
@@ -182,6 +202,8 @@ execute:
 
 > `auto-stretch: false` — prevent Quarto from auto-resizing R figures.
 > `scrollable: true` — slide scrolls if content overflows.
+> `slide-number`/`width`/`height`/`progress` are already set by the extension
+> — no need to repeat them.
 
 ### Syntax reference
 
@@ -285,6 +307,61 @@ Both are styled automatically by `theme-kinan.scss` (AccentPrimary header row fo
 
 `$mainFontSize: 28px` in `/*-- scss:defaults --*/` — all `em`-based sizes scale proportionally.  
 `width: 1600` / `height: 900` in YAML controls the RevealJS viewport scale.
+
+---
+
+## Long-form reports (`kinan-html` / `kinan-pdf`)
+
+For `.qmd` that aren't slides — course notes, tutorials, analysis reports.
+Same underlying house style as `mdpdf`/`article-kinan` (Inter body, Monaspace
+Neon headers, teal rules, flush zebra tables), reached from Quarto instead of
+bare Markdown.
+
+```yaml
+---
+title: "…"
+format:
+  kinan-html: default
+  kinan-pdf: default
+---
+```
+
+- `kinan-pdf` renders through `stats-report-template.tex` (xelatex) with
+  `table-header-font.lua` + `table-zebra.lua` already wired in — any pandoc
+  table gets teal booktabs rules and flush zebra banding for free.
+- `kinan-html` layers `kinan-report.scss` on Bootstrap's `cosmo` theme — same
+  palette/fonts, plus matching zebra tables via `nth-child(even)`.
+- Both default `toc: true`; add `number-sections`, `code-fold`, etc. per
+  document same as any other Quarto format.
+- Rendering both at once (`quarto render`, not `quarto preview`) gives each
+  format a cross-link to the other ("Other Formats" in the HTML sidebar).
+
+### R Markdown equivalent (`.Rmd`)
+
+`rmarkdown::render()` can't consume Quarto extensions, so the same house
+style is wired in directly per-document instead of via a named format:
+
+```yaml
+output:
+  html_document:
+    toc: true
+    css: /Users/kinelhu/.dotfiles/pandoc/themes/kinan/kinan-report.css
+  pdf_document:
+    toc: true
+    latex_engine: xelatex
+    template: /Users/kinelhu/.dotfiles/pandoc/templates/stats-report-template.tex
+    pandoc_args:
+      - "--lua-filter=/Users/kinelhu/.dotfiles/pandoc/filters/table-header-font.lua"
+      - "--lua-filter=/Users/kinelhu/.dotfiles/pandoc/filters/table-zebra.lua"
+```
+
+`kinan-report.css` is a hand-maintained plain-CSS twin of `kinan-report.scss`
+(knitr has no Sass compiler for Quarto's `scss:defaults`/`scss:rules`
+theme format) — same palette, targets Bootstrap 3 (rmarkdown's `html_document`
+default), so keep the two in sync by hand if the look changes.
+
+Skip this for package vignettes (`rmarkdown::html_vignette`) — those should
+look like a standard R vignette, not carry personal branding.
 
 ---
 
