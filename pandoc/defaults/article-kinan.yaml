@@ -9,3 +9,4 @@ bibliography:
   - /Users/kinelhu/Zotero/bibs/full-zotero-library.json
 filters:
   - /Users/kinelhu/.local/share/pandoc/filters/table-header-font.lua
+  - /Users/kinelhu/.local/share/pandoc/filters/table-zebra.lua

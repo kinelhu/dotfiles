@@ -1,12 +1,15 @@
 % =============================================================================
 % house-style.tex — shared PDF/xelatex house style (single source of truth)
 % -----------------------------------------------------------------------------
-% Owns: body font (Inter), palette, and the \HeaderFont command (Monaspace Neon
-% ExtraBold for section/subsection headers, with graceful fallback).
+% Owns: body font (Inter), palette, the \HeaderFont command (Monaspace Neon
+% ExtraBold for section/subsection headers, with graceful fallback), and the
+% tabularray setup used to render zebra-striped tables (see
+% filters/table-zebra.lua — that filter rewrites pandoc tables into
+% \begin{longtabs}, which is what actually applies AccentPrimary rules +
+% AccentLight row banding; this file just makes the package/colors available).
 %
 % Each document keeps its OWN \titleformat (numbering/hierarchy differ per template)
-% and simply uses \HeaderFont as the header font token. Tables are left at the
-% pandoc/booktabs default (no house table styling). Pulled in by:
+% and simply uses \HeaderFont as the header font token. Pulled in by:
 %   - templates/protocol-template.tex      (\input, before \begin{document})
 %   - templates/stats-report-template.tex  (\input, before \begin{document})
 %   - header.tex                           (include-in-header for bare .qmd/.Rmd)
@@ -15,11 +18,14 @@
 % not installed.
 % =============================================================================
 \usepackage{fontspec}
+\usepackage{tabularray}
+\UseTblrLibrary{booktabs}
 
 % ── Palette ──────────────────────────────────────────────────────────────────
 \definecolor{AccentPrimary}{HTML}{27A9BC}
 \definecolor{TextPrimary}{HTML}{1A1A1A}
 \definecolor{TextSecondary}{HTML}{949494}
+\colorlet{AccentLight}{AccentPrimary!8!white}
 
 % ── Fonts ────────────────────────────────────────────────────────────────────
 % Body: Inter if installed (else leave the document default untouched).
