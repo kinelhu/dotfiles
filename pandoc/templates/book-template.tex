@@ -71,6 +71,9 @@ $endif$
 \renewcommand{\footrulewidth}{0pt}
 \renewcommand{\headrule}{\color{RuleGray}\hrule height\headrulewidth}
 \fancyhead[LE]{\runningheadfont\small\itshape\color{InkSecondary}\leftmark}
+% The book class uppercases \leftmark by default; keep the chapter title as
+% typed (it is displayed in italic, uppercase would shout).
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
 \fancyhead[RO]{\runningheadfont\small\itshape\color{InkSecondary}$if(title)$$title$$endif$}
 \fancyfoot[LE,RO]{\runningheadfont\small\color{InkSecondary}\thepage}
 % Chapter-opening pages use LaTeX's plain-vanilla \pagestyle{plain} (blank
@@ -80,16 +83,27 @@ $endif$
 % time a chapter-opening page is typeset, silently blanking every running
 % head for the rest of the document.
 
+% openright inserts a blank verso before each chapter when needed; without
+% this, that inserted page still carries the running head of the chapter
+% just ended. Standard fix: the filler page is typeset truly empty.
+\makeatletter
+\def\cleardoublepage{\clearpage\if@twoside\ifodd\c@page\else
+  \hbox{}\thispagestyle{empty}\newpage
+  \if@twocolumn\hbox{}\newpage\fi\fi\fi}
+\makeatother
+
 % =============================================================================
 % CHAPTER TITLE STYLE — centered, no auto-number, thin rule below
 % =============================================================================
 \usepackage{titlesec}
 
+% Small caps, gently letterspaced — the classic French essay convention —
+% rather than full uppercase, which reads heavy at chapter scale.
 \titleformat{\chapter}[display]
   {\centering\chapterfont}
   {}
   {0pt}
-  {\Large\MakeUppercase}
+  {\Large\scshape\addfontfeature{LetterSpace=6.0}}
   [\vspace{0.4em}{\color{RuleGray}\titlerule[0.4pt]}]
 
 \titlespacing*{\chapter}{0pt}{2.5cm}{1.5cm}
