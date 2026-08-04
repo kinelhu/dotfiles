@@ -136,6 +136,12 @@ $endif$
 \usepackage{lettrine}
 \newcommand{\dropcap}[2]{\lettrine[lines=3,findent=0.1em,nindent=0pt]{#1}{#2}}
 
+% Respiration : mid-chapter breathing space, produced by the markdown
+% horizontal rule (***) via filters/respiration.lua. A blank of roughly a
+% line and a half, slightly stretchable; TeX drops it automatically when it
+% falls at the top of a page, which is the correct behaviour for a blank.
+\newcommand{\respiration}{\par\vspace{1.6\baselineskip plus 0.5\baselineskip minus 0.3\baselineskip}}
+
 % Epigraph, invoked manually as raw LaTeX right after a chapter heading:
 % \epigraph{quotation}{--- attribution}
 \usepackage{epigraph}

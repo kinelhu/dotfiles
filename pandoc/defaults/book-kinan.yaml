@@ -11,6 +11,8 @@
 
 pdf-engine: lualatex
 template: /Users/kinelhu/.local/share/pandoc/templates/book-template.tex
+filters:
+  - /Users/kinelhu/.local/share/pandoc/filters/respiration.lua
 toc: true
 toc-depth: 1
 top-level-division: chapter
