@@ -1,8 +1,10 @@
 -- fullpage.lua
 -- A Div with class `fullpage` is printed on its own page in the PDF, vertically
--- centred (a "plate"): \clearpage before it, \vfill above and below to centre the
--- content, and \clearpage after. Wrap a whole exhibit — an image chunk plus its
--- fig_legend chunk, or a show_csv/show_gts table chunk — in the div:
+-- centred (a "plate"), and SHRUNK-TO-FIT: the whole block (image + legend, or a
+-- table) is wrapped in an adjustbox capped at \textheight, so if it would overflow
+-- the page it scales down uniformly until it fits; if it already fits it is left at
+-- natural size. \clearpage before and after isolate the page; \vfill above/below
+-- centre it. Wrap a whole exhibit's chunk(s) in the div:
 --
 --   ::: {.fullpage}
 --   ```{r}
@@ -13,7 +15,10 @@
 --   ```
 --   :::
 --
--- No-op for non-LaTeX output (HTML is fluid and just renders the content).
+-- Uniform scaling shrinks the legend text along with the image (that is the point —
+-- everything stays proportionate and on one page). The \linewidth minipage gives the
+-- legend a width to wrap at before scaling. No-op for non-LaTeX output.
+-- Requires adjustbox (loaded by stats-report-template.tex).
 
 local function is_latex()
   return FORMAT:match("latex") or FORMAT:match("beamer")
@@ -25,11 +30,21 @@ function Div(el)
   end
   for _, cls in ipairs(el.classes) do
     if cls == "fullpage" then
-      local out = { pandoc.RawBlock("latex", "\\clearpage\\null\\vfill") }
+      local open = table.concat({
+        "\\clearpage\\null\\vfill",
+        "\\begin{adjustbox}{max width=\\linewidth,max totalheight=\\textheight,center}",
+        "\\begin{minipage}{\\linewidth}",
+      }, "\n")
+      local close = table.concat({
+        "\\end{minipage}",
+        "\\end{adjustbox}",
+        "\\vfill\\clearpage",
+      }, "\n")
+      local out = { pandoc.RawBlock("latex", open) }
       for _, b in ipairs(el.content) do
         table.insert(out, b)
       end
-      table.insert(out, pandoc.RawBlock("latex", "\\vfill\\clearpage"))
+      table.insert(out, pandoc.RawBlock("latex", close))
       return out
     end
   end

@@ -460,9 +460,12 @@ below (`gt_house()`) is the piece it builds on.
 
 **Full-page plate — `fullpage.lua`.** Wrap an exhibit's chunk(s) in a
 `::: {.fullpage}` div to print it on its own page in the PDF, vertically centred
-(`\clearpage` + `\vfill` either side). Works for a figure (image + legend) or a
-table; no-op in HTML. Add the filter to `pandoc_args` (see the YAML above). Use
-`landscape` instead for a wide table that would break across pages.
+(`\clearpage` + `\vfill` either side). **Shrink-to-fit:** the block is wrapped in an
+`adjustbox` capped at `\textheight`, so an image + legend that would overflow scales
+down uniformly until it fits (and stays natural size if it already fits) — no more
+overfull-vbox spill. Works for a figure (image + legend) or a table; no-op in HTML.
+Add the filter to `pandoc_args` (see the YAML above). Prefer `landscape` for a
+genuinely wide/long table (shrinking a multi-page table onto one page = tiny).
 
 **gt / gtsummary tables — `gt-house.R`.** The Lua filters and the `.table` CSS
 only reach **pandoc tables** (markdown, `knitr::kable`). `gt` and
