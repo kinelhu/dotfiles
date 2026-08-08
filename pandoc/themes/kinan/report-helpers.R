@@ -96,12 +96,21 @@ fig_legend <- function(name, label = NULL) {
     if (nzchar(lead)) paste0("[", lead, "]{.exhibit-lead} ") else "",
     body, "\n:::\n"))
 }
-show_csv <- function(csv, title = NULL, note = NULL, label = NULL, landscape = FALSE, col_widths = NULL)
+# note defaults to the table's `<name>_footer.md` sidecar (written by save_df_tbl/save_tbl) — the single source of
+# the footnote, authored at the table in the analysis script. Pass note= explicitly only to override for a one-off.
+read_footer <- function(name) {
+  p <- file.path(tab_dir, paste0(name, "_footer.md"))
+  if (file.exists(p)) paste(readLines(p, warn = FALSE), collapse = " ") else NULL
+}
+show_csv <- function(csv, title = NULL, note = NULL, label = NULL, landscape = FALSE, col_widths = NULL) {
+  if (is.null(note)) note <- read_footer(sub("\\.csv$", "", csv))
   house_df(readr::read_csv(file.path(tab_dir, csv), show_col_types = FALSE), title, note, label, landscape, col_widths)
+}
 # gtsummary tables (T1): HTML renders the native object (keeps bold labels, indented
 # levels, BLANK not "NA" category cells); PDF flattens to a tibble so the pipe-table
 # route can house-style it.
 show_gts <- function(rds, title = NULL, note = NULL, label = NULL, landscape = FALSE, col_widths = NULL) {
+  if (is.null(note)) note <- read_footer(sub("\\.rds$", "", rds))
   x <- readRDS(file.path(tab_dir, rds))
   if (knitr::is_latex_output()) return(house_df(gtsummary::as_tibble(x), title, note, label, landscape, col_widths))
   title <- paste(c(label, title), collapse = " "); if (!nzchar(title)) title <- NULL
