@@ -1,10 +1,12 @@
 -- fullpage.lua
 -- A Div with class `fullpage` is printed on its own page in the PDF, vertically
 -- centred (a "plate"), and SHRUNK-TO-FIT: the whole block (image + legend, or a
--- table) is wrapped in an adjustbox capped at \textheight, so if it would overflow
+-- table) is wrapped in an adjustbox capped at 0.94\textheight, so if it would overflow
 -- the page it scales down uniformly until it fits; if it already fits it is left at
--- natural size. \clearpage before and after isolate the page; \vfill above/below
--- centre it. Wrap a whole exhibit's chunk(s) in the div:
+-- natural size. The cap is 0.94 (not 1.0) \textheight to leave headroom for the page's
+-- \topskip: a box of exactly \textheight plus \topskip overflows and floats to the next
+-- page, leaving a blank one behind. \clearpage before and after isolate the page;
+-- \vspace*{\fill} above / \vfill below centre it. Wrap a whole exhibit's chunk(s) in the div:
 --
 --   ::: {.fullpage}
 --   ```{r}
@@ -30,9 +32,12 @@ function Div(el)
   end
   for _, cls in ipairs(el.classes) do
     if cls == "fullpage" then
+      -- Top glue is \vspace*{\fill} (starred → survives the page break) rather than \null\vfill:
+      -- a \null strut plus a \textheight-capped adjustbox exceeds the page for a near-full-height plate,
+      -- floating the box to the next page and leaving a blank one behind. \vspace* adds no strut.
       local open = table.concat({
-        "\\clearpage\\null\\vfill",
-        "\\begin{adjustbox}{max width=\\linewidth,max totalheight=\\textheight,center}",
+        "\\clearpage\\vspace*{\\fill}",
+        "\\begin{adjustbox}{max width=\\linewidth,max totalheight=0.94\\textheight,center}",
         "\\begin{minipage}{\\linewidth}",
       }, "\n")
       local close = table.concat({
