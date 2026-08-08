@@ -354,6 +354,7 @@ output:
     pandoc_args:
       - "--lua-filter=/Users/kinelhu/.dotfiles/pandoc/filters/table-header-font.lua"
       - "--lua-filter=/Users/kinelhu/.dotfiles/pandoc/filters/table-zebra.lua"
+      - "--lua-filter=/Users/kinelhu/.dotfiles/pandoc/filters/fullpage.lua"
 ```
 
 `kinan-report.css` is a hand-maintained plain-CSS twin of `kinan-report.scss`
@@ -431,6 +432,20 @@ gets content-proportional `tabularray` `X[weight,align]` columns that wrap to
 > across BS3/BS5): current values — TOC links 15px, "Contents" 18px, table title
 > `.exhibit-title` 20px, figure caption `.exhibit-lead` 19px, legend `.figure-legend`
 > 14px (body parity). This bites the HTML only; the PDF uses pt and is unaffected.
+
+**Exhibit helpers — `report-helpers.R`.** The full set of authoring helpers
+(`show_csv`, `show_gts`, `fig`, `fig_legend`, `house_df`, `tex_tblr`,
+`tex_exhibit_title`, `latex_escape`) lives in
+`themes/kinan/report-helpers.R`, which itself `source()`s `gt-house.R`. A report's
+setup chunk pulls all of it with one line — `source(".../report-helpers.R")` —
+and only needs `tab_dir`/`fig_dir` globals defined first. The gt-specific styling
+below (`gt_house()`) is the piece it builds on.
+
+**Full-page plate — `fullpage.lua`.** Wrap an exhibit's chunk(s) in a
+`::: {.fullpage}` div to print it on its own page in the PDF, vertically centred
+(`\clearpage` + `\vfill` either side). Works for a figure (image + legend) or a
+table; no-op in HTML. Add the filter to `pandoc_args` (see the YAML above). Use
+`landscape` instead for a wide table that would break across pages.
 
 **gt / gtsummary tables — `gt-house.R`.** The Lua filters and the `.table` CSS
 only reach **pandoc tables** (markdown, `knitr::kable`). `gt` and
