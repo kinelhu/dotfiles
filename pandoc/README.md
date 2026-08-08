@@ -407,6 +407,22 @@ Legend body sizing that read well: near manuscript size, upright (no italics), a
 heavier grey (HTML `#4D4D4D`, PDF `black!70`); the run-in lead larger so the figure
 caption sits in line with the table caption.
 
+**Wide tables in the PDF.** Auto column widths already work — a wide pipe table
+gets content-proportional `tabularray` `X[weight,align]` columns that wrap to
+`\linewidth`. Two escape hatches for when that isn't enough (both are `house_df` /
+`show_csv` / `show_gts` args):
+
+- `landscape = TRUE` — rotate the page for that table (`pdflscape`, loaded by
+  `stats-report-template.tex`). The go-to for many-column tables (e.g. a
+  `tbl_summary` stratified into 8 columns) where portrait is just too narrow.
+- `col_widths = c(3, 1, 1, …)` — exact relative column weights. pandoc's own
+  width inference from a generated table is erratic (pipe *and* grid), so this
+  path emits the `tabularray` `longtabs` **directly** (same teal rules / zebra /
+  `\HeaderFont`), bypassing pandoc. Numeric columns auto right-align. Caveat:
+  cells are LaTeX-escaped, so markdown inside cells is not rendered — use it for
+  plain CSV tables, not `gtsummary` objects (those keep the kable path; give them
+  `landscape` instead).
+
 > **rmarkdown Bootstrap-3 `html { font-size: 10px }` trap.** rmarkdown's
 > `html_document` ships Bootstrap 3, which sets the root font to **10px** while
 > body text is 14px. So `1rem` = 10px, and every rem-based size renders ~62% of
