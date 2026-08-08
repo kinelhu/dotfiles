@@ -61,22 +61,23 @@ p { margin-bottom: 0.9em; }
   padding: 0.9em 1.3em;
   margin: 0 0 1.6em 0;
 
+  // Sizes in absolute px (not rem): rmarkdown's Bootstrap 3 sets html to 10px, so rem renders ~62% small.
   &::before {
     content: "Contents";
     display: block;
     font-family: "Monaspace Neon ExtraBold", #{$headings-font-family};
     font-weight: 800;
     color: $accent-primary;
-    font-size: 1.15rem;
+    font-size: 18px;
     margin-bottom: 0.5em;
   }
-  ul { list-style: none; padding-left: 0; margin-bottom: 0; line-height: 1.35; }
+  ul { list-style: none; padding-left: 0; margin-bottom: 0; line-height: 1.4; }
   ul ul { padding-left: 1.1em; }
-  li { margin: 0.08em 0; }
+  li { margin: 0.12em 0; }
   a {
     color: $text-primary;
     font-family: $font-family-sans-serif;
-    font-size: 1rem;
+    font-size: 15px;
     text-decoration: none;
   }
   a:hover { color: $accent-primary; }
@@ -88,7 +89,7 @@ p { margin-bottom: 0.9em; }
   font-family: "Monaspace Neon ExtraBold", #{$headings-font-family};
   font-weight: 800;
   color: $accent-primary;
-  font-size: 1.2rem;
+  font-size: 20px;
   text-align: left;
   margin: 0.7em 0 0.35em 0;
 }
@@ -97,7 +98,7 @@ p { margin-bottom: 0.9em; }
 .figure-legend {
   font-family: $font-family-sans-serif;
   color: #4D4D4D;                     // heavier grey, near manuscript ink
-  font-size: 0.95rem;                 // near parity with body text
+  font-size: 14px;                    // parity with body text
   line-height: 1.55;
   margin: 0.3em 0 1.3em 0;
 
@@ -105,7 +106,7 @@ p { margin-bottom: 0.9em; }
     font-family: "Monaspace Neon ExtraBold", #{$headings-font-family};
     font-weight: 800;
     color: $accent-primary;
-    font-size: 1.15rem;
+    font-size: 19px;
   }
 }
 

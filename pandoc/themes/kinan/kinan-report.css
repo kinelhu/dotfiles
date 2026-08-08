@@ -49,6 +49,10 @@ h4.date, h4.author { color: #949494; font-family: "Inter", -apple-system, sans-s
 body { line-height: 1.6; }
 p { margin-bottom: 0.9em; }
 
+/* NB: Bootstrap 3 (rmarkdown html_document) sets `html { font-size: 10px }`, so `1rem` = 10px while body
+   text is 14px — rem values render ~62% of expected. These typographic sizes are therefore in ABSOLUTE px
+   (identical across Bootstrap 3/5), calibrated against the 14px body. */
+
 /* ----- Table of contents: boxed, with a "Contents" header, Neon like the headers ----- */
 #TOC {
   border: 1px solid rgba(39, 169, 188, 0.25);
@@ -63,16 +67,16 @@ p { margin-bottom: 0.9em; }
   font-family: "Monaspace Neon ExtraBold", "Monaspace Neon", "Menlo", monospace;
   font-weight: 800;
   color: #27A9BC;
-  font-size: 1.15rem;
+  font-size: 18px;
   margin-bottom: 0.5em;
 }
-#TOC ul { list-style: none; padding-left: 0; margin-bottom: 0; line-height: 1.35; }
+#TOC ul { list-style: none; padding-left: 0; margin-bottom: 0; line-height: 1.4; }
 #TOC ul ul { padding-left: 1.1em; }
-#TOC li { margin: 0.08em 0; }
+#TOC li { margin: 0.12em 0; }
 #TOC a {
   color: #1A1A1A;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-  font-size: 1rem;
+  font-size: 15px;                                 /* > 14px body, comfortably legible */
   text-decoration: none;
 }
 #TOC a:hover { color: #27A9BC; }
@@ -83,7 +87,7 @@ p { margin-bottom: 0.9em; }
   font-family: "Monaspace Neon ExtraBold", "Monaspace Neon", "Menlo", "SFMono-Regular", monospace;
   font-weight: 800;
   color: #27A9BC;
-  font-size: 1.2rem;
+  font-size: 20px;
   text-align: left;
   margin: 0.7em 0 0.35em 0;
 }
@@ -92,7 +96,7 @@ p { margin-bottom: 0.9em; }
 .figure-legend {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   color: #4D4D4D;                                  /* heavier grey, near manuscript ink */
-  font-size: 0.95rem;                              /* near parity with body text */
+  font-size: 14px;                                 /* parity with body text */
   line-height: 1.55;
   margin: 0.3em 0 1.3em 0;
 }
@@ -100,7 +104,7 @@ p { margin-bottom: 0.9em; }
   font-family: "Monaspace Neon ExtraBold", "Monaspace Neon", "Menlo", "SFMono-Regular", monospace;
   font-weight: 800;
   color: #27A9BC;
-  font-size: 1.15rem;
+  font-size: 19px;                                 /* in line with the 20px table title */
 }
 
 /* ----- Code ----- */

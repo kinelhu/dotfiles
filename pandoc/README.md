@@ -403,10 +403,18 @@ clashed. Keep every figure on the SAME `fig()`-image + `fig_legend()` path — a
 figure left on rmarkdown's native `fig.cap=` renders as a Bootstrap `.caption`
 (Inter, no Neon run-in) and stands out; give it a `_legend.md` and convert it.
 
-Legend body sizing that read well: near manuscript size (HTML `0.95rem`, PDF
-`\small`), upright (no italics), a heavier grey (HTML `#4D4D4D`, PDF `black!70`);
-the run-in lead a touch larger (`1.15rem`) so the figure caption sits in line with
-the table caption. TOC links at text parity (`1rem`).
+Legend body sizing that read well: near manuscript size, upright (no italics), a
+heavier grey (HTML `#4D4D4D`, PDF `black!70`); the run-in lead larger so the figure
+caption sits in line with the table caption.
+
+> **rmarkdown Bootstrap-3 `html { font-size: 10px }` trap.** rmarkdown's
+> `html_document` ships Bootstrap 3, which sets the root font to **10px** while
+> body text is 14px. So `1rem` = 10px, and every rem-based size renders ~62% of
+> what you'd expect (a "1.2rem" title is 12px — smaller than body, i.e.
+> "minuscule"). Size the custom typography in **absolute px** instead (identical
+> across BS3/BS5): current values — TOC links 15px, "Contents" 18px, table title
+> `.exhibit-title` 20px, figure caption `.exhibit-lead` 19px, legend `.figure-legend`
+> 14px (body parity). This bites the HTML only; the PDF uses pt and is unaffected.
 
 **gt / gtsummary tables — `gt-house.R`.** The Lua filters and the `.table` CSS
 only reach **pandoc tables** (markdown, `knitr::kable`). `gt` and
