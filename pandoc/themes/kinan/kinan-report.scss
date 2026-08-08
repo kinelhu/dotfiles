@@ -83,27 +83,32 @@ p { margin-bottom: 0.9em; }
   .active > a { color: $accent-primary; font-weight: 600; }
 }
 
-// ----- Exhibit title (tables + figure leads): teal Neon, left-aligned, above the exhibit -----
+// ----- Table title: teal Neon, left-aligned, above the table (block) -----
 .exhibit-title {
   font-family: "Monaspace Neon ExtraBold", #{$headings-font-family};
   font-weight: 800;
   color: $accent-primary;
-  font-size: 1rem;
+  font-size: 1.2rem;
   text-align: left;
-  margin: 0.6em 0 0.35em 0;
+  margin: 0.7em 0 0.35em 0;
 }
 
-// ----- Figure legend body: italic Inter, a shade lighter than body text -----
+// ----- Figure legend: bold teal Neon lead run-in, then italic Inter body, one paragraph -----
 .figure-legend {
   font-family: $font-family-sans-serif;
   font-style: italic;
   color: #5A5A5A;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   line-height: 1.5;
-  margin: 0 0 1.3em 0;
+  margin: 0.3em 0 1.3em 0;
 
   em { font-style: normal; }          // *Abbreviations:* reads upright inside the italic block
-  strong { color: $accent-primary; font-style: normal; }
+  .exhibit-lead {                     // the run-in title, inline before the body
+    font-family: "Monaspace Neon ExtraBold", #{$headings-font-family};
+    font-weight: 800;
+    font-style: normal;
+    color: $accent-primary;
+  }
 }
 
 // ----- Code -----

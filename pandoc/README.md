@@ -371,22 +371,34 @@ dropped — didn't read as tasteful.)
 Neon" + `font-weight: bold` renders visibly lighter than the PDF and looks
 under-weight next to the teal rules.
 
-**Uniform exhibit titles + figure legends.** Two shared classes give tables and
-figures a consistent look in both formats:
+**Exhibit titles + figure legends.** Shared classes give tables and figures a
+consistent look in both formats:
 
-- `.exhibit-title` — teal Neon ExtraBold, left-aligned, sits **above** the
-  exhibit (not gt's centred caption). Used for table titles and for the bold
-  lead of a figure legend.
-- `.figure-legend` — the legend body: italic Inter, a shade lighter than body
-  text; inner `<em>` toggles upright so `*Abbreviations:*` stands out.
+- `.exhibit-title` — teal Neon ExtraBold, left-aligned, a **block above** the
+  table (not gt's centred caption).
+- `.figure-legend` — the legend as one paragraph: a bold teal Neon run-in lead
+  (`.exhibit-lead`, inline) then an italic, slightly-smaller Inter body; inner
+  `<em>` toggles upright so `*Abbreviations:*` stands out.
 
 HTML gets these via CSS. PDF has no div→environment mapping in pandoc (a classed
 div just emits its content), so the same look is produced with **raw LaTeX**: a
-`{\HeaderFont\color{AccentPrimary} …}` line for the title/lead and a
-`\begingroup\itshape\small\color{TextSecondary} … \endgroup` group for the legend
-body. A small `fig_legend()` helper splits a legend's bold lead from its body and
-emits the right thing per format; table titles come from the same
-`tex_exhibit_title()` line. No third Lua filter needed.
+`{\HeaderFont\color{AccentPrimary} …}` line above a table, and for a figure an
+**inline** run of `\textcolor{AccentPrimary}{\HeaderFont{} lead}` +
+`{\itshape\footnotesize\color{TextSecondary} body}` in one paragraph. A
+`fig_legend()` helper splits a legend's bold lead from its body; table titles come
+from `tex_exhibit_title()`. No third Lua filter needed.
+
+Two gotchas that cost time here:
+- **A figure image chunk and the following legend chunk render with no blank line
+  between them**, so pandoc folds the legend's `:::`/raw block into the image's
+  paragraph and it shows up literally. Prefix the legend output with `\n\n`.
+- **Pandoc strips the trailing space inside an inline `` `…`{=latex} `` span**, so
+  `\HeaderFont ` swallows the next word (`\HeaderFontCorpus` → undefined). End the
+  control word with `{}` (`\HeaderFont{}`).
+
+A figure/table's "Supplementary Figure Sx." label is passed as a `label` arg and
+**folded into the teal Neon lead/title** (journal style) rather than sitting as a
+separate bold-black line above the exhibit, which clashed.
 
 **gt / gtsummary tables — `gt-house.R`.** The Lua filters and the `.table` CSS
 only reach **pandoc tables** (markdown, `knitr::kable`). `gt` and

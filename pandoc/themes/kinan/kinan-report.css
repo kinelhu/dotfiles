@@ -78,27 +78,32 @@ p { margin-bottom: 0.9em; }
 #TOC a:hover { color: #27A9BC; }
 #TOC .active > a { color: #27A9BC; font-weight: 600; }
 
-/* ----- Exhibit title (tables + figure leads): teal Neon, left-aligned, above the exhibit ----- */
+/* ----- Table title: teal Neon, left-aligned, above the table (block) ----- */
 .exhibit-title {
   font-family: "Monaspace Neon ExtraBold", "Monaspace Neon", "Menlo", "SFMono-Regular", monospace;
   font-weight: 800;
   color: #27A9BC;
-  font-size: 1rem;
+  font-size: 1.2rem;
   text-align: left;
-  margin: 0.6em 0 0.35em 0;
+  margin: 0.7em 0 0.35em 0;
 }
 
-/* ----- Figure legend body: italic Inter, a shade lighter than body text ----- */
+/* ----- Figure legend: bold teal Neon lead run-in, then italic Inter body, one paragraph ----- */
 .figure-legend {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   font-style: italic;
   color: #5A5A5A;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   line-height: 1.5;
-  margin: 0 0 1.3em 0;
+  margin: 0.3em 0 1.3em 0;
 }
 .figure-legend em { font-style: normal; }        /* *Abbreviations:* reads upright inside the italic block */
-.figure-legend strong { color: #27A9BC; font-style: normal; }
+.figure-legend .exhibit-lead {                    /* the run-in title, inline before the body */
+  font-family: "Monaspace Neon ExtraBold", "Monaspace Neon", "Menlo", "SFMono-Regular", monospace;
+  font-weight: 800;
+  font-style: normal;
+  color: #27A9BC;
+}
 
 /* ----- Code ----- */
 code { color: #27A9BC; background-color: rgba(39, 169, 188, 0.08); }
