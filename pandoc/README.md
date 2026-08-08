@@ -433,6 +433,23 @@ gets content-proportional `tabularray` `X[weight,align]` columns that wrap to
 > `.exhibit-title` 20px, figure caption `.exhibit-lead` 19px, legend `.figure-legend`
 > 14px (body parity). This bites the HTML only; the PDF uses pt and is unaffected.
 
+**Palette — one source, four files (`palette.yml` + `sync-palette.R`).** The teal
+lives in four languages — LaTeX `\definecolor` (`house-style.tex`), CSS custom
+properties (`kinan-report.css`), SCSS `$vars` (`kinan-report.scss`), and R strings
+(`gt-house.R`) — so it can't literally *be* one file. Instead `themes/kinan/palette.yml`
+is the single source, and each file carries a `>>> kinan palette … <<< kinan palette`
+marked block. Edit `palette.yml`, then:
+
+```bash
+Rscript ~/.dotfiles/pandoc/themes/kinan/sync-palette.R
+```
+
+regenerates all four blocks (derived values — the rgb channels, the `rgba()` string,
+the flattened light-teal for gt — are computed, not stored). The file bodies
+reference the block: CSS via `var(--accent)` / `rgba(var(--accent-rgb), a)`, SCSS via
+`$accent-primary` / `rgba($accent-primary, a)`, LaTeX via the colour names, R via
+`kin_accent` etc. Never hand-edit a colour inside a marked block.
+
 **Exhibit helpers — `report-helpers.R`.** The full set of authoring helpers
 (`show_csv`, `show_gts`, `fig`, `fig_legend`, `house_df`, `tex_tblr`,
 `tex_exhibit_title`, `latex_escape`) lives in

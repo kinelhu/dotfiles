@@ -1,0 +1,9 @@
+# Canonical house-style palette — the single source of truth for the teal theme.
+# Edit these, then run:  Rscript ~/.dotfiles/pandoc/themes/kinan/sync-palette.R
+# which regenerates the marked colour blocks in house-style.tex, kinan-report.css,
+# kinan-report.scss, and gt-house.R (derived values — the rgba/rgb channels and the
+# flattened light-teal — are computed, not stored here).
+accent: "#27A9BC"          # teal — AccentPrimary
+ink: "#1A1A1A"             # body text — TextPrimary
+secondary: "#949494"       # muted text — TextSecondary
+accent_light_alpha: 0.08   # alpha for light-teal fills (table zebra, code background)
