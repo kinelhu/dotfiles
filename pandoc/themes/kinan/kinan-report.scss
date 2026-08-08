@@ -37,8 +37,9 @@ h3, h4, h5, h6 { color: $text-primary; font-family: $font-family-sans-serif; fon
 
   thead th {
     border-bottom: 1px solid $accent-primary;
-    font-family: $headings-font-family;
-    font-weight: 700;
+    // ExtraBold face to match the PDF's \HeaderFont; plain Neon + bold looks lighter.
+    font-family: "Monaspace Neon ExtraBold", #{$headings-font-family};
+    font-weight: 800;
   }
 
   tbody tr:nth-child(even) > * {
@@ -48,10 +49,38 @@ h3, h4, h5, h6 { color: $text-primary; font-family: $font-family-sans-serif; fon
   th, td { border-color: transparent; }
 }
 
-// ----- Table of contents -----
+// ----- Readability: give body copy room to breathe -----
+body { line-height: 1.6; }
+p { margin-bottom: 0.9em; }
+
+// ----- Table of contents: boxed, with a "Contents" header, Neon like the headers -----
 #TOC {
-  a { color: $text-primary; }
-  a.active { color: $accent-primary; font-weight: 600; }
+  border: 1px solid rgba(39, 169, 188, 0.25);
+  border-radius: 6px;
+  background-color: rgba(39, 169, 188, 0.04);
+  padding: 0.9em 1.3em;
+  margin: 0 0 1.6em 0;
+
+  &::before {
+    content: "Contents";
+    display: block;
+    font-family: "Monaspace Neon ExtraBold", #{$headings-font-family};
+    font-weight: 800;
+    color: $accent-primary;
+    font-size: 1.15rem;
+    margin-bottom: 0.5em;
+  }
+  ul { list-style: none; padding-left: 0; margin-bottom: 0; }
+  ul ul { padding-left: 1.2em; }
+  li { margin: 0.22em 0; }
+  a {
+    color: $text-primary;
+    font-family: $headings-font-family;
+    font-size: 0.95rem;
+    text-decoration: none;
+  }
+  a:hover { color: $accent-primary; }
+  .active > a { color: $accent-primary; font-weight: 700; }
 }
 
 // ----- Code -----

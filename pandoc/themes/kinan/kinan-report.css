@@ -31,8 +31,8 @@ h4.date, h4.author { color: #949494; font-family: "Inter", -apple-system, sans-s
 
 .table > thead > tr > th {
   border-bottom: 1px solid #27A9BC;
-  font-family: "Monaspace Neon", "Menlo", "SFMono-Regular", monospace;
-  font-weight: 700;
+  font-family: "Monaspace Neon ExtraBold", "Monaspace Neon", "Menlo", "SFMono-Regular", monospace;
+  font-weight: 800;
 }
 
 .table > tbody > tr:nth-child(even) > td,
@@ -45,9 +45,38 @@ h4.date, h4.author { color: #949494; font-family: "Inter", -apple-system, sans-s
   border-color: transparent;
 }
 
-/* ----- Table of contents ----- */
-#TOC a { color: #1A1A1A; }
+/* ----- Readability: give body copy room to breathe ----- */
+body { line-height: 1.6; }
+p { margin-bottom: 0.9em; }
+
+/* ----- Table of contents: boxed, with a "Contents" header, Neon like the headers ----- */
+#TOC {
+  border: 1px solid rgba(39, 169, 188, 0.25);
+  border-radius: 6px;
+  background-color: rgba(39, 169, 188, 0.04);
+  padding: 0.9em 1.3em;
+  margin: 0 0 1.6em 0;
+}
+#TOC::before {
+  content: "Contents";
+  display: block;
+  font-family: "Monaspace Neon ExtraBold", "Monaspace Neon", "Menlo", monospace;
+  font-weight: 800;
+  color: #27A9BC;
+  font-size: 1.15rem;
+  margin-bottom: 0.5em;
+}
+#TOC ul { list-style: none; padding-left: 0; margin-bottom: 0; }
+#TOC ul ul { padding-left: 1.2em; }
+#TOC li { margin: 0.22em 0; }
+#TOC a {
+  color: #1A1A1A;
+  font-family: "Monaspace Neon", "Menlo", "SFMono-Regular", monospace;
+  font-size: 0.95rem;
+  text-decoration: none;
+}
 #TOC a:hover { color: #27A9BC; }
+#TOC .active > a { color: #27A9BC; font-weight: 700; }
 
 /* ----- Code ----- */
 code { color: #27A9BC; background-color: rgba(39, 169, 188, 0.08); }

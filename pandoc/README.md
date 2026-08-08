@@ -345,6 +345,7 @@ style is wired in directly per-document instead of via a named format:
 output:
   html_document:
     toc: true
+    toc_depth: 3
     css: /Users/kinelhu/.dotfiles/pandoc/themes/kinan/kinan-report.css
   pdf_document:
     toc: true
@@ -360,8 +361,74 @@ output:
 theme format) — same palette, targets Bootstrap 3 (rmarkdown's `html_document`
 default), so keep the two in sync by hand if the look changes.
 
-Skip this for package vignettes (`rmarkdown::html_vignette`) — those should
-look like a standard R vignette, not carry personal branding.
+**TOC.** A plain `toc: true` block; the CSS gives `#TOC` a subtle teal-bordered
+box, a bold Neon **"Contents"** header (via `::before`), and Neon links, so it
+echoes the headers it points to. (A floating `toc_float` sidebar was tried and
+dropped — didn't read as tasteful.)
+
+**Header weight.** Table headers, captions, and the `.table thead` use
+**Monaspace Neon ExtraBold** (matching the PDF's `\HeaderFont`) — plain "Monaspace
+Neon" + `font-weight: bold` renders visibly lighter than the PDF and looks
+under-weight next to the teal rules.
+
+**gt / gtsummary tables — `gt-house.R`.** The Lua filters and the `.table` CSS
+only reach **pandoc tables** (markdown, `knitr::kable`). `gt` and
+`gtsummary::as_gt()` emit their own scoped styling — `<table class="gt_table">`
+in HTML, raw LaTeX in PDF — so they **bypass the house style in both formats**.
+Two-part fix:
+
+- *HTML*: `source(".../themes/kinan/gt-house.R")` and pipe every gt through
+  `gt_house()` (apply it **last**, after `tab_header`/`tab_source_note`). It
+  reproduces the `.table` look from inside gt: Inter body, bold teal Monaspace
+  Neon column headers **and caption/title**, flush teal zebra, transparent
+  interior rules. Palette mirrors `kinan-report.scss` — keep in sync by hand.
+- *PDF*: don't feed gt LaTeX to xelatex — render the same data as a **pandoc
+  pipe table** so it flows through `table-header-font.lua` + `table-zebra.lua`
+  like any markdown table. A format-aware helper does both, e.g.:
+
+  ```r
+  house_df <- function(df, title = NULL, note = NULL) {
+    if (knitr::is_latex_output()) {
+      df <- as.data.frame(df, check.names = FALSE)
+      names(df) <- gsub("[\r\n]+", " ", names(df))      # newlines in headers break pipe tables
+      df[] <- lapply(df, \(c) { c <- as.character(c); c[is.na(c)] <- ""; c })  # blank NA cells
+      out <- paste(knitr::kable(df, format = "pipe"), collapse = "\n")         # NO caption (see below)
+      if (!is.null(title))                              # title as a bold teal Neon line instead
+        out <- paste0("```{=latex}\n\\par\\noindent{\\HeaderFont\\color{AccentPrimary}",
+                      title, "}\\par\\vspace{0.15em}\n```\n\n", out)
+      if (!is.null(note)) out <- paste0(out, "\n\n", note)
+      return(knitr::asis_output(out))                   # → lua filters style the table
+    }
+    g <- gt::gt(df)
+    if (!is.null(title)) g <- gt::tab_header(g, title = title)
+    if (!is.null(note))  g <- gt::tab_source_note(g, gt::md(note))
+    gt_house(g)                                         # HTML: match .table
+  }
+  ```
+
+  For a `gtsummary` object, flatten with `gtsummary::as_tibble()` in the LaTeX
+  branch before `house_df()`.
+
+  Two things learned building this:
+  - **Don't pass `caption=` to `kable`.** A pandoc table caption makes
+    `tabularray`'s `longtabs` auto-number it ("Table 1:", "Table 2:" …), which
+    reads as noise in a report that titles its tables descriptively. Render the
+    title as its own bold Neon line above the table instead (as above) — it also
+    matches the HTML Neon caption from `gt_house()`. Escape LaTeX specials in the
+    title if they can occur.
+  - **`gtsummary::as_tibble()` column names contain `\n`** (e.g.
+    `**Overall**  \nN = 485`). A newline in a pipe-table header cell breaks the
+    table — pandoc dumps it as raw text. Collapse them first (the `gsub` above).
+
+> **PDF caption gotcha (figures):** knitr inserts a chunk's static `fig.cap`
+> straight into `\caption{}` **without escaping**, so a raw `_`/`%`/`&`/`$`/`#`
+> (e.g. a file path like `foo_bar.R`) throws xelatex into math mode ("Missing $
+> inserted"). Keep static `fig.cap` strings free of LaTeX specials, or wrap
+> offending tokens in backticks. (Underscores are harmless in HTML, so this only
+> bites the PDF.)
+
+Skip all of this for package vignettes (`rmarkdown::html_vignette`) — those
+should look like a standard R vignette, not carry personal branding.
 
 ---
 
