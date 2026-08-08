@@ -59,7 +59,9 @@ house_df <- function(df, title = NULL, note = NULL, label = NULL, landscape = FA
     body <- if (!is.null(col_widths)) tex_tblr(df, col_widths)               # custom widths (direct tabularray)
             else paste(knitr::kable(df, format = "pipe"), collapse = "\n")   # auto widths via kable + Lua filters
     out <- if (!is.null(title)) paste0(tex_exhibit_title(title), body) else body
-    if (!is.null(note)) out <- paste0(out, "\n\n", note)  # note as a following paragraph
+    # note in the figure-legend body treatment (\small, heavier grey) so a footnote reads as a footnote,
+    # not as another line of body text. Markdown between the raw-latex spans is still processed by pandoc.
+    if (!is.null(note)) out <- paste0(out, "\n\n`{\\small\\color{black!70}`{=latex}", note, "`\\par}`{=latex}")
     if (landscape)
       out <- paste0("```{=latex}\n\\begin{landscape}\n```\n\n", out, "\n\n```{=latex}\n\\end{landscape}\n```\n")
     return(knitr::asis_output(out))
