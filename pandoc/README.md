@@ -371,6 +371,23 @@ dropped — didn't read as tasteful.)
 Neon" + `font-weight: bold` renders visibly lighter than the PDF and looks
 under-weight next to the teal rules.
 
+**Uniform exhibit titles + figure legends.** Two shared classes give tables and
+figures a consistent look in both formats:
+
+- `.exhibit-title` — teal Neon ExtraBold, left-aligned, sits **above** the
+  exhibit (not gt's centred caption). Used for table titles and for the bold
+  lead of a figure legend.
+- `.figure-legend` — the legend body: italic Inter, a shade lighter than body
+  text; inner `<em>` toggles upright so `*Abbreviations:*` stands out.
+
+HTML gets these via CSS. PDF has no div→environment mapping in pandoc (a classed
+div just emits its content), so the same look is produced with **raw LaTeX**: a
+`{\HeaderFont\color{AccentPrimary} …}` line for the title/lead and a
+`\begingroup\itshape\small\color{TextSecondary} … \endgroup` group for the legend
+body. A small `fig_legend()` helper splits a legend's bold lead from its body and
+emits the right thing per format; table titles come from the same
+`tex_exhibit_title()` line. No third Lua filter needed.
+
 **gt / gtsummary tables — `gt-house.R`.** The Lua filters and the `.table` CSS
 only reach **pandoc tables** (markdown, `knitr::kable`). `gt` and
 `gtsummary::as_gt()` emit their own scoped styling — `<table class="gt_table">`
