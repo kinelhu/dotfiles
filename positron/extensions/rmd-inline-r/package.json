@@ -1,0 +1,21 @@
+{
+  "name": "rmd-inline-r",
+  "displayName": "R Markdown inline R highlighting",
+  "description": "Highlights inline `r ...` code spans (R Markdown / knitr style) by injecting the R grammar into markdown and quarto documents.",
+  "publisher": "local",
+  "version": "0.0.1",
+  "engines": { "vscode": "^1.75.0" },
+  "categories": ["Programming Languages"],
+  "contributes": {
+    "grammars": [
+      {
+        "scopeName": "markdown.inline.r.codespan.injection",
+        "path": "./inline-r.tmLanguage.json",
+        "injectTo": ["text.html.markdown", "text.html.quarto"],
+        "embeddedLanguages": {
+          "meta.embedded.inline.r": "r"
+        }
+      }
+    ]
+  }
+}

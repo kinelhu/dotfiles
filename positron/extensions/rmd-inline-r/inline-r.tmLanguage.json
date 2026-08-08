@@ -1,0 +1,22 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "scopeName": "markdown.inline.r.codespan.injection",
+  "injectionSelector": "L:text.html.markdown -string -comment, L:text.html.quarto -string -comment",
+  "patterns": [
+    {
+      "comment": "R Markdown inline code: `r <expr>` (braces-less knitr form). Injects the R grammar into the span; mirrors the base markdown code-span rule so the same backtick run closes it.",
+      "name": "markup.inline.raw.r.markdown",
+      "begin": "(`+)(r)(?=\\s)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.raw.begin.markdown" },
+        "2": { "name": "entity.name.function.r" }
+      },
+      "end": "(\\1)",
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.raw.end.markdown" }
+      },
+      "contentName": "meta.embedded.inline.r",
+      "patterns": [{ "include": "source.r" }]
+    }
+  ]
+}

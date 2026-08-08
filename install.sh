@@ -92,6 +92,15 @@ else
     echo -e "${YELLOW}Positron not found — skipping Positron settings link${NC}"
 fi
 
+# Positron local (unpacked) extensions — symlink each tracked extension into the user extensions dir.
+# Positron follows symlinks here, so the source of truth stays in the repo. Reload Positron to pick them up.
+if [ -d "$HOME/.positron/extensions" ]; then
+    for ext in "$DOTFILES_DIR"/positron/extensions/*/; do
+        [ -d "$ext" ] || continue
+        create_symlink "${ext%/}" "$HOME/.positron/extensions/$(basename "${ext%/}")"
+    done
+fi
+
 # Zotero plugins and user preferences
 ZOTERO_PROFILE=$(find "$HOME/Library/Application Support/Zotero/Profiles" -maxdepth 1 -name "*.default" -type d 2>/dev/null | head -1)
 if [ -n "$ZOTERO_PROFILE" ]; then
