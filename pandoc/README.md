@@ -396,9 +396,17 @@ Two gotchas that cost time here:
   `\HeaderFont ` swallows the next word (`\HeaderFontCorpus` → undefined). End the
   control word with `{}` (`\HeaderFont{}`).
 
-A figure/table's "Supplementary Figure Sx." label is passed as a `label` arg and
-**folded into the teal Neon lead/title** (journal style) rather than sitting as a
-separate bold-black line above the exhibit, which clashed.
+A figure/table's "Figure 1." / "Table 2." / "Supplementary Figure Sx." label is
+passed as a `label` arg and **folded into the teal Neon lead/title** (journal
+style) rather than sitting as a separate bold-black line above the exhibit, which
+clashed. Keep every figure on the SAME `fig()`-image + `fig_legend()` path — a
+figure left on rmarkdown's native `fig.cap=` renders as a Bootstrap `.caption`
+(Inter, no Neon run-in) and stands out; give it a `_legend.md` and convert it.
+
+Legend body sizing that read well: near manuscript size (HTML `0.95rem`, PDF
+`\small`), upright (no italics), a heavier grey (HTML `#4D4D4D`, PDF `black!70`);
+the run-in lead a touch larger (`1.15rem`) so the figure caption sits in line with
+the table caption. TOC links at text parity (`1rem`).
 
 **gt / gtsummary tables — `gt-house.R`.** The Lua filters and the `.table` CSS
 only reach **pandoc tables** (markdown, `knitr::kable`). `gt` and

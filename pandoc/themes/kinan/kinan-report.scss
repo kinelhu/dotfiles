@@ -76,7 +76,7 @@ p { margin-bottom: 0.9em; }
   a {
     color: $text-primary;
     font-family: $font-family-sans-serif;
-    font-size: 0.9rem;
+    font-size: 1rem;
     text-decoration: none;
   }
   a:hover { color: $accent-primary; }
@@ -93,21 +93,19 @@ p { margin-bottom: 0.9em; }
   margin: 0.7em 0 0.35em 0;
 }
 
-// ----- Figure legend: bold teal Neon lead run-in, then italic Inter body, one paragraph -----
+// ----- Figure legend: bold teal Neon lead run-in, then upright Inter body, one paragraph -----
 .figure-legend {
   font-family: $font-family-sans-serif;
-  font-style: italic;
-  color: #5A5A5A;
-  font-size: 0.85rem;
-  line-height: 1.5;
+  color: #4D4D4D;                     // heavier grey, near manuscript ink
+  font-size: 0.95rem;                 // near parity with body text
+  line-height: 1.55;
   margin: 0.3em 0 1.3em 0;
 
-  em { font-style: normal; }          // *Abbreviations:* reads upright inside the italic block
-  .exhibit-lead {                     // the run-in title, inline before the body
+  .exhibit-lead {                     // the run-in caption, in line with the table caption
     font-family: "Monaspace Neon ExtraBold", #{$headings-font-family};
     font-weight: 800;
-    font-style: normal;
     color: $accent-primary;
+    font-size: 1.15rem;
   }
 }
 

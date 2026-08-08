@@ -72,7 +72,7 @@ p { margin-bottom: 0.9em; }
 #TOC a {
   color: #1A1A1A;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-  font-size: 0.9rem;
+  font-size: 1rem;
   text-decoration: none;
 }
 #TOC a:hover { color: #27A9BC; }
@@ -88,21 +88,19 @@ p { margin-bottom: 0.9em; }
   margin: 0.7em 0 0.35em 0;
 }
 
-/* ----- Figure legend: bold teal Neon lead run-in, then italic Inter body, one paragraph ----- */
+/* ----- Figure legend: bold teal Neon lead run-in, then upright Inter body, one paragraph ----- */
 .figure-legend {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-  font-style: italic;
-  color: #5A5A5A;
-  font-size: 0.85rem;
-  line-height: 1.5;
+  color: #4D4D4D;                                  /* heavier grey, near manuscript ink */
+  font-size: 0.95rem;                              /* near parity with body text */
+  line-height: 1.55;
   margin: 0.3em 0 1.3em 0;
 }
-.figure-legend em { font-style: normal; }        /* *Abbreviations:* reads upright inside the italic block */
-.figure-legend .exhibit-lead {                    /* the run-in title, inline before the body */
+.figure-legend .exhibit-lead {                     /* the run-in caption, in line with the table caption */
   font-family: "Monaspace Neon ExtraBold", "Monaspace Neon", "Menlo", "SFMono-Regular", monospace;
   font-weight: 800;
-  font-style: normal;
   color: #27A9BC;
+  font-size: 1.15rem;
 }
 
 /* ----- Code ----- */
