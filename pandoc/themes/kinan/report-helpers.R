@@ -96,12 +96,23 @@ tex_tblr <- function(df, widths) {
 }
 # landscape = TRUE rotates the page for a wide table (pdflscape, loaded by the template).
 # col_widths = numeric weights (one per column) → tex_tblr for exact control instead of auto widths.
-house_df <- function(df, title = NULL, note = NULL, label = NULL, landscape = FALSE, col_widths = NULL) {
+house_df <- function(df, title = NULL, note = NULL, label = NULL, landscape = FALSE, col_widths = NULL,
+                     group_col = NULL) {
   title <- paste(c(label, title), collapse = " "); if (!nzchar(title)) title <- NULL  # fold "Table Sx." in
+  has_grp <- !is.null(group_col) && group_col %in% names(df)
   if (knitr::is_latex_output()) {
     df <- as.data.frame(df, check.names = FALSE)
     names(df) <- gsub("[\r\n]+", " ", names(df))          # newlines in headers break pipe tables (gtsummary)
     df[] <- lapply(df, function(col) { col <- as.character(col); col[is.na(col)] <- ""; col })  # blank NA cells
+    if (has_grp) {                                         # section headers: one bold row per group, group col dropped (pandoc renders **md** in pipe cells)
+      grp <- df[[group_col]]; body_df <- df[, setdiff(names(df), group_col), drop = FALSE]
+      first <- names(body_df)[1]
+      parts <- lapply(unique(grp), function(g) {
+        hdr <- body_df[1, , drop = FALSE]; hdr[] <- ""; hdr[[first]] <- paste0("**", g, "**")
+        rbind(hdr, body_df[grp == g, , drop = FALSE])
+      })
+      df <- do.call(rbind, parts); rownames(df) <- NULL
+    }
     body <- if (!is.null(col_widths)) tex_tblr(df, col_widths)               # custom widths (direct tabularray)
             else paste(knitr::kable(df, format = "pipe"), collapse = "\n")   # auto widths via kable + Lua filters
     out <- if (!is.null(title)) paste0(tex_exhibit_title(title), body) else body
@@ -112,7 +123,7 @@ house_df <- function(df, title = NULL, note = NULL, label = NULL, landscape = FA
       out <- paste0("```{=latex}\n\\begin{landscape}\n```\n\n", out, "\n\n```{=latex}\n\\end{landscape}\n```\n")
     return(knitr::asis_output(out))
   }
-  g <- gt::gt(df)
+  g <- if (has_grp) gt::gt(df, groupname_col = group_col) else gt::gt(df)   # native spanning row groups in HTML
   if (!is.null(note)) g <- g |> gt::tab_source_note(gt::md(note))
   g <- gt_house(g)
   if (is.null(title)) return(g)
@@ -155,7 +166,8 @@ read_footer <- function(name) {
 # file present in tab_dir — `<id>.rds` (a gtsummary object) else `<id>.csv` (a plain data frame). Registers for the
 # bottom index (kind = "table") and renders with NO inline number. gtsummary (T1): HTML renders the native object
 # (bold labels, indented levels, BLANK not "NA" cells); PDF flattens to a tibble for the house pipe-table route.
-show_table <- function(id, title = NULL, note = NULL, tier = "suppl", landscape = FALSE, col_widths = NULL) {
+show_table <- function(id, title = NULL, note = NULL, tier = "suppl", landscape = FALSE, col_widths = NULL,
+                       group_col = NULL) {
   base <- sub("\\.(csv|rds)$", "", id)
   if (is.null(note)) note <- read_footer(base)
   register_exhibit(base, tier, "table", if (!is.null(title) && nzchar(title)) title else base)   # index adds the number
@@ -172,7 +184,7 @@ show_table <- function(id, title = NULL, note = NULL, tier = "suppl", landscape 
                               htmltools::HTML(gt::as_raw_html(g))))
   }
   house_df(readr::read_csv(file.path(tab_dir, paste0(base, ".csv")), show_col_types = FALSE),
-           disp, note, NULL, landscape, col_widths)         # disp = type label + caption; NULL label
+           disp, note, NULL, landscape, col_widths, group_col)   # disp = type label + caption; NULL label
 }
 # Back-compat shims (deprecated — prefer show_table). Kept so older call sites don't break during migration.
 show_csv <- function(csv, title = NULL, note = NULL, tier = "suppl", landscape = FALSE, col_widths = NULL)
