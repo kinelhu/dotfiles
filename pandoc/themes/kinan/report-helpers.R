@@ -122,7 +122,15 @@ show_gts <- function(rds, title = NULL, note = NULL, label = NULL, landscape = F
   if (is.null(title)) return(g)
   htmltools::tagList(htmltools::tags$div(title, class = "exhibit-title"),
                      htmltools::HTML(gt::as_raw_html(g))) }
-fig <- function(name) knitr::include_graphics(file.path(fig_dir, paste0(name, ".png")))
+# Prefer the vector PDF in a LaTeX/PDF build (sharp at any scale, journal-preferred; save_fig writes it via
+# cairo_pdf, so fonts embed and alpha is honoured), fall back to the 300-dpi PNG for HTML (browsers can't inline
+# a PDF as <img>) or if no PDF exists. One code path for every figure — including the Graphviz pipeline diagram.
+fig <- function(name) {
+  pdf <- file.path(fig_dir, paste0(name, ".pdf"))
+  knitr::include_graphics(
+    if (knitr::is_latex_output() && file.exists(pdf)) pdf
+    else file.path(fig_dir, paste0(name, ".png")))
+}
 fig_cap <- function(name) {                                 # descriptive caption from the figure's legend .md (no number)
   p <- file.path(fig_dir, paste0(name, "_legend.md"))
   if (!file.exists(p)) return("")
