@@ -63,11 +63,11 @@ gt_house <- function(g,
         style     = gt::cell_text(font = head_font, weight = "bold", color = accent),
         locations = gt::cells_title(groups = "title")),
       error = function(e) g))() |>
-    # Source note (table footnote) in the figure-legend treatment — smaller + heavier grey — so it reads
-    # as a footnote, not as body text. Matches .figure-legend (#4D4D4D). tryCatch: no-op if no source note.
+    # Source note (table footnote): smaller + heavier grey so it reads as a footnote, not body text. A step
+    # below the 14px figure legend (#4D4D4D) — a table footnote is subordinate. tryCatch: no-op if none.
     (\(g) tryCatch(
       g |> gt::tab_style(
-        style     = gt::cell_text(size = gt::px(12), color = "#4D4D4D"),
+        style     = gt::cell_text(size = gt::px(11), color = "#4D4D4D"),
         locations = gt::cells_source_notes()),
       error = function(e) g))()
 }
