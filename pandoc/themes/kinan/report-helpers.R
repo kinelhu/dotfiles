@@ -125,10 +125,12 @@ show_gts <- function(rds, title = NULL, note = NULL, label = NULL, landscape = F
 # Prefer the vector PDF in a LaTeX/PDF build (sharp at any scale, journal-preferred; save_fig writes it via
 # cairo_pdf, so fonts embed and alpha is honoured), fall back to the 300-dpi PNG for HTML (browsers can't inline
 # a PDF as <img>) or if no PDF exists. One code path for every figure — including the Graphviz pipeline diagram.
-fig <- function(name) {
+# force_png = TRUE keeps the raster even in the PDF build — the escape hatch for a figure whose vector PDF is
+# pathological (e.g. a 100k-point scatter that would bloat the file); no current figure needs it.
+fig <- function(name, force_png = FALSE) {
   pdf <- file.path(fig_dir, paste0(name, ".pdf"))
   knitr::include_graphics(
-    if (knitr::is_latex_output() && file.exists(pdf)) pdf
+    if (!force_png && knitr::is_latex_output() && file.exists(pdf)) pdf
     else file.path(fig_dir, paste0(name, ".png")))
 }
 fig_cap <- function(name) {                                 # descriptive caption from the figure's legend .md (no number)
