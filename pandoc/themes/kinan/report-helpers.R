@@ -44,6 +44,10 @@ exhibit_label <- function(id) {                              # resolved "Figure 
            main.table = "Table ", suppl.table = "Supplementary Table S")[[paste(e$tier, e$kind, sep = ".")]]
   paste0(pfx, n)
 }
+exhibit_type <- function(tier, kind) {                       # UNNUMBERED inline type label from the declared tier
+  base <- c(figure = "Figure", table = "Table")[[kind]]      # e.g. "Supplementary Figure" / "Table"
+  if (tier == "suppl") paste0("Supplementary ", base) else base
+}
 exhibit_index <- function() {                                # the numbered catalogue — call once at the end of the report
   items <- .exhibit_reg$items
   grp <- function(tier, kind, header) {
@@ -127,7 +131,8 @@ fig_legend <- function(name, tier = "suppl") {
   has  <- length(m) == 3
   lead <- if (has) trimws(m[2]) else ""
   body <- if (has) trimws(m[3]) else txt
-  register_exhibit(name, tier, "figure", sub("\\.$", "", lead))   # no inline number; caption = the bold lead
+  register_exhibit(name, tier, "figure", sub("\\.$", "", lead))   # caption = the bold lead (index adds the number)
+  lead <- trimws(paste0(exhibit_type(tier, "figure"), ". ", lead))   # unnumbered inline type label, e.g. "Supplementary Figure. <title>"
   if (knitr::is_latex_output()) {
     ld <- if (nzchar(lead))   # \HeaderFont{} — the {} keeps the control word from eating the lead's first word
       paste0("`\\textcolor{AccentPrimary}{\\HeaderFont{}`{=latex}", lead, "`}`{=latex} ") else ""
@@ -153,21 +158,21 @@ read_footer <- function(name) {
 show_table <- function(id, title = NULL, note = NULL, tier = "suppl", landscape = FALSE, col_widths = NULL) {
   base <- sub("\\.(csv|rds)$", "", id)
   if (is.null(note)) note <- read_footer(base)
-  register_exhibit(base, tier, "table", if (!is.null(title) && nzchar(title)) title else base)
+  register_exhibit(base, tier, "table", if (!is.null(title) && nzchar(title)) title else base)   # index adds the number
+  # Unnumbered inline type label from the tier, e.g. "Supplementary Table. <caption>" (number lives in the index).
+  disp <- if (!is.null(title) && nzchar(title)) paste0(exhibit_type(tier, "table"), ". ", title) else exhibit_type(tier, "table")
   rds <- file.path(tab_dir, paste0(base, ".rds"))
   if (file.exists(rds)) {                                   # gtsummary object
     x <- readRDS(rds)
-    if (knitr::is_latex_output()) return(house_df(gtsummary::as_tibble(x), title, note, NULL, landscape, col_widths))
-    ttl <- if (!is.null(title) && nzchar(title)) title else NULL
+    if (knitr::is_latex_output()) return(house_df(gtsummary::as_tibble(x), disp, note, NULL, landscape, col_widths))
     g <- gtsummary::as_gt(x)
     if (!is.null(note)) g <- g |> gt::tab_source_note(gt::md(note))
     g <- gt_house(g)
-    if (is.null(ttl)) return(g)
-    return(htmltools::tagList(htmltools::tags$div(ttl, class = "exhibit-title"),
+    return(htmltools::tagList(htmltools::tags$div(disp, class = "exhibit-title"),
                               htmltools::HTML(gt::as_raw_html(g))))
   }
   house_df(readr::read_csv(file.path(tab_dir, paste0(base, ".csv")), show_col_types = FALSE),
-           title, note, NULL, landscape, col_widths)       # NULL label = no inline number
+           disp, note, NULL, landscape, col_widths)         # disp = type label + caption; NULL label
 }
 # Back-compat shims (deprecated — prefer show_table). Kept so older call sites don't break during migration.
 show_csv <- function(csv, title = NULL, note = NULL, tier = "suppl", landscape = FALSE, col_widths = NULL)
