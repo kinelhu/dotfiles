@@ -100,7 +100,13 @@ house_df <- function(df, title = NULL, note = NULL, label = NULL, landscape = FA
                      group_col = NULL) {
   title <- paste(c(label, title), collapse = " "); if (!nzchar(title)) title <- NULL  # fold "Table Sx." in
   has_grp <- !is.null(group_col) && group_col %in% names(df)
-  if (knitr::is_latex_output()) {
+  is_tex <- knitr::is_latex_output()
+  # Word takes the PDF's flatten-to-pipe-table route, not the gt route: pandoc's docx writer DROPS raw
+  # HTML, so a gt table emits nothing at all and the exhibit silently disappears from the document. A
+  # pipe table becomes a real w:tbl styled by the reference doc. Title and note go as markdown, since
+  # the raw-LaTeX runs the PDF branch wraps them in would be dropped for the same reason.
+  is_docx <- !is_tex && isTRUE(knitr::pandoc_to("docx"))
+  if (is_tex || is_docx) {
     df <- as.data.frame(df, check.names = FALSE)
     names(df) <- gsub("[\r\n]+", " ", names(df))          # newlines in headers break pipe tables (gtsummary)
     df[] <- lapply(df, function(col) { col <- as.character(col); col[is.na(col)] <- ""; col })  # blank NA cells
@@ -113,8 +119,13 @@ house_df <- function(df, title = NULL, note = NULL, label = NULL, landscape = FA
       })
       df <- do.call(rbind, parts); rownames(df) <- NULL
     }
-    body <- if (!is.null(col_widths)) tex_tblr(df, col_widths)               # custom widths (direct tabularray)
+    body <- if (!is.null(col_widths) && is_tex) tex_tblr(df, col_widths)     # custom widths (direct tabularray; LaTeX only)
             else paste(knitr::kable(df, format = "pipe"), collapse = "\n")   # auto widths via kable + Lua filters
+    if (is_docx) {
+      out <- if (!is.null(title)) paste0("**", title, "**\n\n", body) else body
+      if (!is.null(note)) out <- paste0(out, "\n\n", note, "\n")
+      return(knitr::asis_output(paste0("\n\n", out, "\n\n")))
+    }
     out <- if (!is.null(title)) paste0(tex_exhibit_title(title), body) else body
     # note as a footnote: \footnotesize + heavier grey, a step below the figure-legend \small (a table
     # footnote is subordinate to a legend). Markdown between the raw-latex spans is still processed by pandoc.
@@ -151,6 +162,8 @@ fig_legend <- function(name, tier = "suppl") {
       "\n\n", ld,
       "`{\\small\\color{black!70}`{=latex}", body, "`\\par}`{=latex}\n")))
   }
+  if (isTRUE(knitr::pandoc_to("docx")))   # the div/span below are styling hooks with no docx equivalent
+    return(knitr::asis_output(paste0("\n\n", if (nzchar(lead)) paste0("**", lead, "** ") else "", body, "\n")))
   knitr::asis_output(paste0(
     "\n\n::: {.figure-legend}\n",
     if (nzchar(lead)) paste0("[", lead, "]{.exhibit-lead} ") else "",
@@ -176,7 +189,9 @@ show_table <- function(id, title = NULL, note = NULL, tier = "suppl", landscape 
   rds <- file.path(tab_dir, paste0(base, ".rds"))
   if (file.exists(rds)) {                                   # gtsummary object
     x <- readRDS(rds)
-    if (knitr::is_latex_output()) return(house_df(gtsummary::as_tibble(x), disp, note, NULL, landscape, col_widths))
+    # docx joins the LaTeX branch: as_gt() below yields raw HTML, which the docx writer drops (see house_df).
+    if (knitr::is_latex_output() || isTRUE(knitr::pandoc_to("docx")))
+      return(house_df(gtsummary::as_tibble(x), disp, note, NULL, landscape, col_widths))
     g <- gtsummary::as_gt(x)
     if (!is.null(note)) g <- g |> gt::tab_source_note(gt::md(note))
     g <- gt_house(g)
