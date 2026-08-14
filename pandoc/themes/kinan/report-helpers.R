@@ -152,8 +152,16 @@ tex_tblr <- function(df, widths) {
   }
   # \newline, not \\: inside a cell "\\" would end the table row. X columns are paragraph-mode, so this
   # is a line break within the header cell.
+  # Trim the whitespace AROUND the break, not just the break: gtsummary writes the markdown hard-break
+  # idiom ("**Overall**  \nN = 1,073"), and in a right-aligned column those two trailing spaces are
+  # typeset, leaving the first line two characters short of the edge while the second sits flush.
+  # \linebreak, not \newline: \newline fills the rest of the broken line, which overrides the column's
+  # alignment ("Overall" came out flush left above a right-aligned "N = 1,073"). \linebreak adds no fill,
+  # so each line follows the column. \shortstack is not an option here — it does not wrap, so a long
+  # header overflows into its neighbour.
   hdr  <- paste0("{\\HeaderFont ",
-                 gsub("[\r\n]+", "\\\\newline ", md_bold(latex_escape(names(df)))), "}", collapse = " & ")
+                 gsub("[ \t]*[\r\n]+[ \t]*", "\\\\linebreak ",
+                      md_bold(latex_escape(names(df)))), "}", collapse = " & ")
   rows <- vapply(seq_len(nrow(df)), function(i)
     paste0(mapply(nb, md_bold(latex_escape(as.character(df[i, ]))), num), collapse = " & "), character(1))
   zebra <- if (nrow(df) >= 2) 1 + seq(2, nrow(df), by = 2) else integer(0)   # header = row 1; shade alt body rows
@@ -176,7 +184,7 @@ docx_ft <- function(df, title = NULL, note = NULL, fontsize = 8, col_widths = NU
   # markers are simply removed there. Strip pairs anywhere rather than only whole-cell, since gtsummary
   # emits both wrapped labels and partially marked headers.
   unmd <- function(x) gsub("__(.*?)__", "\\1", gsub("\\*\\*(.*?)\\*\\*", "\\1", x))
-  names(df) <- unmd(names(df))
+  names(df) <- gsub("[ \t]*[\r\n]+[ \t]*", "\n", unmd(names(df)))   # same trim for Word
   bold_at <- list()
   for (j in seq_along(df)) {
     hit <- grep("^(\\*\\*|__)(.*)\\1$", df[[j]])
