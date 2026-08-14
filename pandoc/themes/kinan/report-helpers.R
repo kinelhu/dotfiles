@@ -82,7 +82,11 @@ tex_exhibit_title <- function(title)                       # bold teal Neon line
 # Used when col_widths is given, because pandoc's own width inference from a generated table is unreliable.
 # Cells are LaTeX-escaped, so markdown in cells is NOT rendered — use for plain CSV tables, not gtsummary.
 tex_tblr <- function(df, widths) {
-  if (length(widths) != ncol(df)) widths <- rep(1, ncol(df))
+  # Length must match the DISPLAYED columns, i.e. after group_col removes its own. Falling back to equal
+  # widths here would silently undo the caller's layout the moment a table gains a column.
+  if (length(widths) != ncol(df))
+    stop(sprintf("col_widths has %d weights for %d displayed columns%s.", length(widths), ncol(df),
+                 " (group_col drops its own column)"), call. = FALSE)
   num  <- vapply(df, function(c) { v <- c[nzchar(c)]; length(v) > 0 && all(grepl("^[-0-9.,%() /+–]+$", v)) }, logical(1))
   # A numeric cell must never be split: LaTeX treats the hyphen in a range as a break point, so a narrow
   # column rendered "2.03-4.66" as "2.03" over "4.66" and doubled every row's height. \mbox forbids the
