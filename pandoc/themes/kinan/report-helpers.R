@@ -129,10 +129,14 @@ tex_tblr <- function(df, widths) {
   # break; if the column really is too narrow the overflow is visible rather than silently misleading.
   nb <- function(x, is_num) if (is_num) ifelse(nzchar(x), paste0("\\mbox{", x, "}"), x) else x
   colspec <- paste0(sprintf("X[%s,%s]", format(widths, trim = TRUE), ifelse(num, "r", "l")), collapse = "")
-  hdr  <- paste0("{\\HeaderFont ", latex_escape(names(df)), "}", collapse = " & ")
-  # Section-header rows arrive as **Group** (house_df inserts them for group_col). latex_escape leaves
-  # asterisks alone, so without this they print literally: col_widths and group_col would not compose.
-  md_bold <- function(x) sub("^\\*\\*(.*)\\*\\*$", "{\\\\bfseries \\1}", x)
+  # Cells arrive with markdown bold from two sources: **Group** section rows inserted by house_df, and
+  # gtsummary's **header** / __label__ markup. Applied AFTER latex_escape, so `_` is already `\_`; without
+  # it the markers print literally, which is what kept gtsummary tables off this path entirely.
+  md_bold <- function(x) {
+    x <- gsub("\\*\\*(.+?)\\*\\*", "\\\\textbf{\\1}", x)
+    gsub("\\\\_\\\\_(.+?)\\\\_\\\\_", "\\\\textbf{\\1}", x)
+  }
+  hdr  <- paste0("{\\HeaderFont ", md_bold(latex_escape(names(df))), "}", collapse = " & ")
   rows <- vapply(seq_len(nrow(df)), function(i)
     paste0(mapply(nb, md_bold(latex_escape(as.character(df[i, ]))), num), collapse = " & "), character(1))
   zebra <- if (nrow(df) >= 2) 1 + seq(2, nrow(df), by = 2) else integer(0)   # header = row 1; shade alt body rows

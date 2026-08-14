@@ -419,10 +419,29 @@ gets content-proportional `tabularray` `X[weight,align]` columns that wrap to
 - `col_widths = c(3, 1, 1, …)` — exact relative column weights. pandoc's own
   width inference from a generated table is erratic (pipe *and* grid), so this
   path emits the `tabularray` `longtabs` **directly** (same teal rules / zebra /
-  `\HeaderFont`), bypassing pandoc. Numeric columns auto right-align. Caveat:
-  cells are LaTeX-escaped, so markdown inside cells is not rendered — use it for
-  plain CSV tables, not `gtsummary` objects (those keep the kable path; give them
-  `landscape` instead).
+  `\HeaderFont`), bypassing pandoc. Numeric columns auto right-align, and their
+  cells go in `\mbox` so a range never splits: LaTeX treats the hyphen in
+  `2.03-4.66` as a break point, and a tight column would otherwise stack it over
+  two lines. Cells are LaTeX-escaped, but `**bold**` / `__bold__` survive as
+  `\textbf`, so `gtsummary` objects take this path too. A length mismatch is an
+  error — the vector must match the **displayed** columns, i.e. after `group_col`
+  removes its own.
+
+**You rarely type widths.** `auto_col_widths(df, group_col)` derives them from the
+table's own content, and `save_df_tbl()` / `save_tbl()` store the result in a
+`<name>_display.dcf` sidecar alongside `<name>_footer.md`, together with
+`group_col` and `landscape`. `show_table()` reads it, so display travels with the
+table instead of being re-declared in every document that shows it; arguments
+passed at the call site still win. The derivation: unbreakable numeric columns
+claim their longest cell, text claims a fraction of its longest (floored by its
+longest word, since headers wrap at spaces *and* hyphens), capped at 30
+characters so one long label cannot swallow the table.
+
+**Word tables** are built by `flextable`, not by the markdown route — pandoc's
+docx writer drops raw HTML entirely (a `gt` table emits nothing at all) and
+derives widths from a pipe table's widest cell, starving the short columns. They
+take the same relative weights at fixed layout, and markdown in cells and headers
+becomes real bold rather than literal `__markers__`.
 
 > **rmarkdown Bootstrap-3 `html { font-size: 10px }` trap.** rmarkdown's
 > `html_document` ships Bootstrap 3, which sets the root font to **10px** while
