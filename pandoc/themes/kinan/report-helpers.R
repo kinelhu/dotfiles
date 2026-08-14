@@ -84,9 +84,17 @@ tex_exhibit_title <- function(title)                       # bold teal Neon line
 tex_tblr <- function(df, widths) {
   if (length(widths) != ncol(df)) widths <- rep(1, ncol(df))
   num  <- vapply(df, function(c) { v <- c[nzchar(c)]; length(v) > 0 && all(grepl("^[-0-9.,%() /+–]+$", v)) }, logical(1))
+  # A numeric cell must never be split: LaTeX treats the hyphen in a range as a break point, so a narrow
+  # column rendered "2.03-4.66" as "2.03" over "4.66" and doubled every row's height. \mbox forbids the
+  # break; if the column really is too narrow the overflow is visible rather than silently misleading.
+  nb <- function(x, is_num) if (is_num) ifelse(nzchar(x), paste0("\\mbox{", x, "}"), x) else x
   colspec <- paste0(sprintf("X[%s,%s]", format(widths, trim = TRUE), ifelse(num, "r", "l")), collapse = "")
   hdr  <- paste0("{\\HeaderFont ", latex_escape(names(df)), "}", collapse = " & ")
-  rows <- vapply(seq_len(nrow(df)), function(i) paste0(latex_escape(as.character(df[i, ])), collapse = " & "), character(1))
+  # Section-header rows arrive as **Group** (house_df inserts them for group_col). latex_escape leaves
+  # asterisks alone, so without this they print literally: col_widths and group_col would not compose.
+  md_bold <- function(x) sub("^\\*\\*(.*)\\*\\*$", "{\\\\bfseries \\1}", x)
+  rows <- vapply(seq_len(nrow(df)), function(i)
+    paste0(mapply(nb, md_bold(latex_escape(as.character(df[i, ]))), num), collapse = " & "), character(1))
   zebra <- if (nrow(df) >= 2) 1 + seq(2, nrow(df), by = 2) else integer(0)   # header = row 1; shade alt body rows
   zspec <- if (length(zebra)) sprintf(", row{%s} = {bg=AccentLight}", paste(zebra, collapse = ",")) else ""
   paste0("```{=latex}\n",
