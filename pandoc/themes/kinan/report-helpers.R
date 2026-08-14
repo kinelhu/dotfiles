@@ -69,6 +69,42 @@ exhibit_index <- function() {                                # the numbered cata
 # house Lua filters (table-header-font.lua → Monaspace Neon headers; table-zebra.lua
 # → teal rules + zebra) exactly like the markdown tables. gt/gtsummary LaTeX bypasses
 # those filters, which is why the gts looked unstyled in the PDF.
+# What counts as an unbreakable numeric cell. Kept as one constant because three places must agree:
+# right-alignment, \mbox protection, and width derivation. Brackets admit "2.0 [1.0-3.0]"; <> admit
+# "<1%" and ">99%", which were previously read as text and mis-aligned.
+NUMRE <- "^[-0-9.,%()\\[\\]<>=\u2265\u2264 /+\u2013]+$"
+.num_cols <- function(df) vapply(df, function(c) {
+  v <- as.character(c); v <- v[!is.na(v) & nzchar(v)]
+  length(v) > 0 && all(grepl(NUMRE, v)) }, logical(1))
+
+# Recommended relative column weights, derived from the table's own content, so a caller never has to
+# guess-render-correct. Numeric columns cannot break, so they claim their longest cell outright; text
+# wraps, so it claims a fraction of its longest cell, floored by its longest unbreakable word (a header
+# wraps between words and at hyphens, so "2005-2010" demands 4 characters, not 9). The cap keeps one very
+# long label from swallowing the table: past ~30 characters it is wrapping regardless.
+auto_col_widths <- function(df, group_col = NULL) {
+  d <- if (!is.null(group_col) && group_col %in% names(df)) df[setdiff(names(df), group_col)] else df
+  isnum <- .num_cols(d)
+  maxc <- vapply(d, function(c) { v <- as.character(c); v <- v[!is.na(v) & nzchar(v)]
+    if (length(v)) max(nchar(v)) else 1 }, numeric(1))
+  hdr  <- vapply(strsplit(names(d), "[ /\n-]+"), function(w) max(nchar(w)), numeric(1))
+  w <- ifelse(isnum, pmax(maxc, hdr), pmax(pmin(maxc, 30) / 2.2, hdr))
+  round(w / min(w), 1)
+}
+
+# Display metadata authored at the table (analysis side) and read here, mirroring the <name>_footer.md
+# sidecar. Grouping and column weights are properties of the table, not of the document showing it: the
+# same table appears in several documents, and specifying them per document is how one copy came to
+# group while another did not.
+read_display <- function(name) {
+  p <- file.path(tab_dir, paste0(name, "_display.dcf"))
+  if (!file.exists(p)) return(list())
+  d <- as.list(as.data.frame(read.dcf(p), stringsAsFactors = FALSE))
+  if (!is.null(d$col_widths)) d$col_widths <- as.numeric(strsplit(d$col_widths, ",")[[1]])
+  if (!is.null(d$landscape)) d$landscape <- as.logical(d$landscape)
+  d[!vapply(d, function(x) length(x) == 0 || all(is.na(x)), logical(1))]
+}
+
 latex_escape <- function(x) {                              # minimal escape for title text
   x <- gsub("\\\\", "\\\\textbackslash{}", x)
   x <- gsub("([&%$#_{}])", "\\\\\\1", x)
@@ -87,7 +123,7 @@ tex_tblr <- function(df, widths) {
   if (length(widths) != ncol(df))
     stop(sprintf("col_widths has %d weights for %d displayed columns%s.", length(widths), ncol(df),
                  " (group_col drops its own column)"), call. = FALSE)
-  num  <- vapply(df, function(c) { v <- c[nzchar(c)]; length(v) > 0 && all(grepl("^[-0-9.,%() /+–]+$", v)) }, logical(1))
+  num  <- .num_cols(df)
   # A numeric cell must never be split: LaTeX treats the hyphen in a range as a break point, so a narrow
   # column rendered "2.03-4.66" as "2.03" over "4.66" and doubled every row's height. \mbox forbids the
   # break; if the column really is too narrow the overflow is visible rather than silently misleading.
@@ -112,17 +148,36 @@ tex_tblr <- function(df, widths) {
 # pipe table's delimiter row, i.e. from each column's widest cell, so one long free-text column starves the
 # short ones: a 6-column codebook gave "not stated" a 0.22-inch column that wrapped to two characters per
 # line and ran a 36-row table over several pages. flextable writes the OOXML directly and autofits.
-docx_ft <- function(df, title = NULL, note = NULL, fontsize = 8) {
-  grp <- grep("^\\*\\*.*\\*\\*$", df[[1]])                  # section-header rows carry markdown bold
-  if (length(grp)) df[[1]] <- sub("^\\*\\*(.*)\\*\\*$", "\\1", df[[1]])
+docx_ft <- function(df, title = NULL, note = NULL, fontsize = 8, col_widths = NULL) {
+  # gtsummary writes **bold** / __bold__ into its label cells and flextable renders no markdown, so
+  # without this Word printed "__Outcome role__" literally. Find them, strip the markers, bold the cell.
+  # Headers carry it too ("**Overall**  N = 1,073"), and flextable bolds the header row itself, so the
+  # markers are simply removed there. Strip pairs anywhere rather than only whole-cell, since gtsummary
+  # emits both wrapped labels and partially marked headers.
+  unmd <- function(x) gsub("__(.*?)__", "\\1", gsub("\\*\\*(.*?)\\*\\*", "\\1", x))
+  names(df) <- unmd(names(df))
+  bold_at <- list()
+  for (j in seq_along(df)) {
+    hit <- grep("^(\\*\\*|__)(.*)\\1$", df[[j]])
+    if (length(hit)) {
+      bold_at[[length(bold_at) + 1L]] <- list(i = hit, j = j)
+    }
+    df[[j]] <- unmd(df[[j]])          # whole-cell markers bolded above; strip any remaining pairs
+  }
   ft <- flextable::flextable(df)
-  if (length(grp)) ft <- flextable::bold(ft, i = grp, j = 1, part = "body")
+  for (b in bold_at) ft <- flextable::bold(ft, i = b$i, j = b$j, part = "body")
   ft <- ft |>
     flextable::bold(part = "header") |>
     flextable::fontsize(size = fontsize, part = "all") |>
     flextable::valign(valign = "top", part = "all") |>
-    flextable::padding(padding.top = 1, padding.bottom = 1, part = "all") |>
-    flextable::set_table_properties(layout = "autofit", width = 1)
+    flextable::padding(padding.top = 1, padding.bottom = 1, part = "all")
+  # Word gets the same relative weights as the PDF. Autofit sizes columns to content and so re-creates
+  # the starved-column problem on wide tables; fixed widths from the weights do not. 6.5in = letter/A4
+  # text width at 1in margins. Derived from content when the caller supplies none.
+  if (is.null(col_widths) || length(col_widths) != ncol(df)) col_widths <- auto_col_widths(df)
+  ft <- ft |>
+    flextable::width(width = 6.5 * col_widths / sum(col_widths)) |>
+    flextable::set_table_properties(layout = "fixed")
   if (!is.null(title)) ft <- flextable::set_caption(ft, title)
   # flextable renders no markdown, so strip the emphasis pairs the footnote is authored with.
   if (!is.null(note))
@@ -155,7 +210,7 @@ house_df <- function(df, title = NULL, note = NULL, label = NULL, landscape = FA
     }
     body <- if (!is.null(col_widths) && is_tex) tex_tblr(df, col_widths)     # custom widths (direct tabularray; LaTeX only)
             else paste(knitr::kable(df, format = "pipe"), collapse = "\n")   # auto widths via kable + Lua filters
-    if (is_docx) return(docx_ft(df, title, note))
+    if (is_docx) return(docx_ft(df, title, note, col_widths = col_widths))
     out <- if (!is.null(title)) paste0(tex_exhibit_title(title), body) else body
     # note as a footnote: \footnotesize + heavier grey, a step below the figure-legend \small (a table
     # footnote is subordinate to a legend). Markdown between the raw-latex spans is still processed by pandoc.
@@ -209,10 +264,14 @@ read_footer <- function(name) {
 # file present in tab_dir — `<id>.rds` (a gtsummary object) else `<id>.csv` (a plain data frame). Registers for the
 # bottom index (kind = "table") and renders with NO inline number. gtsummary (T1): HTML renders the native object
 # (bold labels, indented levels, BLANK not "NA" cells); PDF flattens to a tibble for the house pipe-table route.
-show_table <- function(id, title = NULL, note = NULL, tier = "suppl", landscape = FALSE, col_widths = NULL,
+show_table <- function(id, title = NULL, note = NULL, tier = "suppl", landscape = NULL, col_widths = NULL,
                        group_col = NULL, numbered = FALSE) {
   base <- sub("\\.(csv|rds)$", "", id)
   if (is.null(note)) note <- read_footer(base)
+  disp <- read_display(base)                       # authored at the table; arguments here override it
+  if (is.null(col_widths)) col_widths <- disp$col_widths
+  if (is.null(group_col))  group_col  <- disp$group_col
+  if (is.null(landscape))  landscape  <- isTRUE(disp$landscape)
   register_exhibit(base, tier, "table", if (!is.null(title) && nzchar(title)) title else base)   # index adds the number
   # Unnumbered inline type label from the tier, e.g. "Supplementary Table. <caption>" (number lives in the index).
   # numbered = TRUE resolves the registry number into the caption instead ("Table 1. <caption>"), for a journal
