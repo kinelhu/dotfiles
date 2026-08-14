@@ -53,10 +53,15 @@ exhibit_index <- function() {                                # the numbered cata
   grp <- function(tier, kind, header) {
     g <- Filter(function(x) x$tier == tier && x$kind == kind, items); if (!length(g)) return("")
     rows <- vapply(g, function(e) sprintf("| %s | %s |", exhibit_label(e$id), e$caption), character(1))
-    paste0("\n**", header, "**\n\n| # | Exhibit |\n|---|---------|\n", paste(rows, collapse = "\n"), "\n")
+    # Pandoc takes a pipe table's relative column widths from the DASH COUNTS in the delimiter row. Left
+    # at "|---|", the label column was narrow enough to break "Supplementary Figure S1" over two lines.
+    # A caption may wrap (they run long); a label must not.
+    paste0("\n**", header, "**\n\n| # | Exhibit |\n|", strrep("-", 26), "|", strrep("-", 62), "|\n",
+           paste(rows, collapse = "\n"), "\n")
   }
   ref <- Filter(function(x) x$tier == "ref", items)          # unnumbered reference exhibits, listed apart
-  ref_out <- if (length(ref)) paste0("\n**Reference (unnumbered)**\n\n| Kind | Exhibit |\n|---|---------|\n",
+  ref_out <- if (length(ref)) paste0("\n**Reference (unnumbered)**\n\n| Kind | Exhibit |\n|",
+    strrep("-", 26), "|", strrep("-", 62), "|\n",
     paste(vapply(ref, function(e) sprintf("| %s | %s |", tools::toTitleCase(e$kind), e$caption), character(1)),
           collapse = "\n"), "\n") else ""
   knitr::asis_output(paste0(
@@ -73,9 +78,12 @@ exhibit_index <- function() {                                # the numbered cata
 # right-alignment, \mbox protection, and width derivation. Brackets admit "2.0 [1.0-3.0]"; <> admit
 # "<1%" and ">99%", which were previously read as text and mis-aligned.
 NUMRE <- "^[-0-9.,%()\\[\\]<>=\u2265\u2264 /+\u2013]+$"
+# perl = TRUE is REQUIRED: in a POSIX bracket expression a backslash is literal, so "\\[" and "\\]" do not
+# escape — the "]" closed the class early and the pattern matched nothing at all, silently disabling both
+# right-alignment and the \mbox protection.
 .num_cols <- function(df) vapply(df, function(c) {
   v <- as.character(c); v <- v[!is.na(v) & nzchar(v)]
-  length(v) > 0 && all(grepl(NUMRE, v)) }, logical(1))
+  length(v) > 0 && all(grepl(NUMRE, v, perl = TRUE)) }, logical(1))
 
 # Recommended relative column weights, derived from the table's own content, so a caller never has to
 # guess-render-correct. Numeric columns cannot break, so they claim their longest cell outright; text
@@ -88,7 +96,7 @@ auto_col_widths <- function(df, group_col = NULL) {
   maxc <- vapply(d, function(c) { v <- as.character(c); v <- v[!is.na(v) & nzchar(v)]
     if (length(v)) max(nchar(v)) else 1 }, numeric(1))
   hdr  <- vapply(strsplit(names(d), "[ /\n-]+"), function(w) max(nchar(w)), numeric(1))
-  w <- ifelse(isnum, pmax(maxc, hdr), pmax(pmin(maxc, 30) / 2.2, hdr))
+  w <- ifelse(isnum, pmax(maxc, hdr), pmax(pmin(maxc, 30) / 1.8, hdr))
   round(w / min(w), 1)
 }
 
@@ -127,7 +135,13 @@ tex_tblr <- function(df, widths) {
   # A numeric cell must never be split: LaTeX treats the hyphen in a range as a break point, so a narrow
   # column rendered "2.03-4.66" as "2.03" over "4.66" and doubled every row's height. \mbox forbids the
   # break; if the column really is too narrow the overflow is visible rather than silently misleading.
-  nb <- function(x, is_num) if (is_num) ifelse(nzchar(x), paste0("\\mbox{", x, "}"), x) else x
+  nb <- function(x, is_num) {
+    if (is_num) return(ifelse(nzchar(x), paste0("\\mbox{", x, "}"), x))
+    # LaTeX will not break a compound like "Pseudomonas/Aspergillus": it has no space and no hyphen, so a
+    # column narrower than the token overflows into the neighbour and the tail is lost under it. Permit a
+    # break after the slash instead of demanding the width.
+    gsub("/", "/\\\\allowbreak{}", x, fixed = FALSE)
+  }
   colspec <- paste0(sprintf("X[%s,%s]", format(widths, trim = TRUE), ifelse(num, "r", "l")), collapse = "")
   # Cells arrive with markdown bold from two sources: **Group** section rows inserted by house_df, and
   # gtsummary's **header** / __label__ markup. Applied AFTER latex_escape, so `_` is already `\_`; without
