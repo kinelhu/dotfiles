@@ -96,6 +96,28 @@ tex_tblr <- function(df, widths) {
 }
 # landscape = TRUE rotates the page for a wide table (pdflscape, loaded by the template).
 # col_widths = numeric weights (one per column) → tex_tblr for exact control instead of auto widths.
+# Word tables go through flextable, NOT a markdown pipe table. Pandoc derives Word column widths from the
+# pipe table's delimiter row, i.e. from each column's widest cell, so one long free-text column starves the
+# short ones: a 6-column codebook gave "not stated" a 0.22-inch column that wrapped to two characters per
+# line and ran a 36-row table over several pages. flextable writes the OOXML directly and autofits.
+docx_ft <- function(df, title = NULL, note = NULL, fontsize = 8) {
+  grp <- grep("^\\*\\*.*\\*\\*$", df[[1]])                  # section-header rows carry markdown bold
+  if (length(grp)) df[[1]] <- sub("^\\*\\*(.*)\\*\\*$", "\\1", df[[1]])
+  ft <- flextable::flextable(df)
+  if (length(grp)) ft <- flextable::bold(ft, i = grp, j = 1, part = "body")
+  ft <- ft |>
+    flextable::bold(part = "header") |>
+    flextable::fontsize(size = fontsize, part = "all") |>
+    flextable::valign(valign = "top", part = "all") |>
+    flextable::padding(padding.top = 1, padding.bottom = 1, part = "all") |>
+    flextable::set_table_properties(layout = "autofit", width = 1)
+  if (!is.null(title)) ft <- flextable::set_caption(ft, title)
+  # flextable renders no markdown, so strip the emphasis pairs the footnote is authored with.
+  if (!is.null(note))
+    ft <- flextable::add_footer_lines(ft, gsub("\\*(\\S[^*]*?\\S|\\S)\\*", "\\1", note)) |>
+      flextable::fontsize(size = fontsize - 1, part = "footer")
+  ft
+}
 house_df <- function(df, title = NULL, note = NULL, label = NULL, landscape = FALSE, col_widths = NULL,
                      group_col = NULL) {
   title <- paste(c(label, title), collapse = " "); if (!nzchar(title)) title <- NULL  # fold "Table Sx." in
@@ -121,11 +143,7 @@ house_df <- function(df, title = NULL, note = NULL, label = NULL, landscape = FA
     }
     body <- if (!is.null(col_widths) && is_tex) tex_tblr(df, col_widths)     # custom widths (direct tabularray; LaTeX only)
             else paste(knitr::kable(df, format = "pipe"), collapse = "\n")   # auto widths via kable + Lua filters
-    if (is_docx) {
-      out <- if (!is.null(title)) paste0("**", title, "**\n\n", body) else body
-      if (!is.null(note)) out <- paste0(out, "\n\n", note, "\n")
-      return(knitr::asis_output(paste0("\n\n", out, "\n\n")))
-    }
+    if (is_docx) return(docx_ft(df, title, note))
     out <- if (!is.null(title)) paste0(tex_exhibit_title(title), body) else body
     # note as a footnote: \footnotesize + heavier grey, a step below the figure-legend \small (a table
     # footnote is subordinate to a legend). Markdown between the raw-latex spans is still processed by pandoc.
@@ -180,12 +198,15 @@ read_footer <- function(name) {
 # bottom index (kind = "table") and renders with NO inline number. gtsummary (T1): HTML renders the native object
 # (bold labels, indented levels, BLANK not "NA" cells); PDF flattens to a tibble for the house pipe-table route.
 show_table <- function(id, title = NULL, note = NULL, tier = "suppl", landscape = FALSE, col_widths = NULL,
-                       group_col = NULL) {
+                       group_col = NULL, numbered = FALSE) {
   base <- sub("\\.(csv|rds)$", "", id)
   if (is.null(note)) note <- read_footer(base)
   register_exhibit(base, tier, "table", if (!is.null(title) && nzchar(title)) title else base)   # index adds the number
   # Unnumbered inline type label from the tier, e.g. "Supplementary Table. <caption>" (number lives in the index).
-  disp <- if (!is.null(title) && nzchar(title)) paste0(exhibit_type(tier, "table"), ". ", title) else exhibit_type(tier, "table")
+  # numbered = TRUE resolves the registry number into the caption instead ("Table 1. <caption>"), for a journal
+  # submission where each table travels as its own file and cannot rely on a document-level index.
+  lab  <- if (numbered) exhibit_label(base) else exhibit_type(tier, "table")
+  disp <- if (!is.null(title) && nzchar(title)) paste0(lab, ". ", title) else lab
   rds <- file.path(tab_dir, paste0(base, ".rds"))
   if (file.exists(rds)) {                                   # gtsummary object
     x <- readRDS(rds)
