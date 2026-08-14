@@ -150,7 +150,10 @@ tex_tblr <- function(df, widths) {
     x <- gsub("\\*\\*(.+?)\\*\\*", "\\\\textbf{\\1}", x)
     gsub("\\\\_\\\\_(.+?)\\\\_\\\\_", "\\\\textbf{\\1}", x)
   }
-  hdr  <- paste0("{\\HeaderFont ", md_bold(latex_escape(names(df))), "}", collapse = " & ")
+  # \newline, not \\: inside a cell "\\" would end the table row. X columns are paragraph-mode, so this
+  # is a line break within the header cell.
+  hdr  <- paste0("{\\HeaderFont ",
+                 gsub("[\r\n]+", "\\\\newline ", md_bold(latex_escape(names(df)))), "}", collapse = " & ")
   rows <- vapply(seq_len(nrow(df)), function(i)
     paste0(mapply(nb, md_bold(latex_escape(as.character(df[i, ]))), num), collapse = " & "), character(1))
   zebra <- if (nrow(df) >= 2) 1 + seq(2, nrow(df), by = 2) else integer(0)   # header = row 1; shade alt body rows
@@ -215,7 +218,10 @@ house_df <- function(df, title = NULL, note = NULL, label = NULL, landscape = FA
   is_docx <- !is_tex && isTRUE(knitr::pandoc_to("docx"))
   if (is_tex || is_docx) {
     df <- as.data.frame(df, check.names = FALSE)
-    names(df) <- gsub("[\r\n]+", " ", names(df))          # newlines in headers break pipe tables (gtsummary)
+    # gtsummary authors a deliberate break in stratified headers ("**RCT**\nN = 40"). Only the pipe-table
+    # route cannot carry it — a newline there terminates the row — so collapse it just for that route;
+    # tabularray and flextable both render it.
+    if (is_tex && is.null(col_widths)) names(df) <- gsub("[\r\n]+", " ", names(df))
     df[] <- lapply(df, function(col) { col <- as.character(col); col[is.na(col)] <- ""; col })  # blank NA cells
     if (has_grp) {                                         # section headers: one bold row per group, group col dropped (pandoc renders **md** in pipe cells)
       grp <- df[[group_col]]; body_df <- df[, setdiff(names(df), group_col), drop = FALSE]
