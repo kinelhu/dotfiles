@@ -46,7 +46,7 @@
     "editor.scrollBeyondLastLine": false,
     "window.title": "${activeEditorFull}${separator}${rootName}",
     "editor.tabSize": 4,
-    "editor.wordWrap": "on",
+    "editor.wordWrap": "bounded",
     "editor.multiCursorModifier": "ctrlCmd",
     "editor.snippetSuggestions": "top",
     "workbench.editor.wrapTabs": true,
@@ -111,8 +111,14 @@
     "terminal.integrated.fontFamily": "monospace",
     "editor.lineHeight": 1.5,
     "[markdown]": {
-        "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
+        "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
+        "editor.wordWrap": "on"
     },
     "workbench.editor.enablePreview": false,
-    "markdown.extension.tableFormatter.enabled": false
+    "markdown.extension.tableFormatter.enabled": false,
+    "quarto.visualEditor.markdownWrap": "sentence",
+    "[quarto]": {
+        "editor.wordWrap": "bounded"
+    },
+    "editor.wordWrapColumn": 90
 }

@@ -30,9 +30,33 @@ source("/Users/kinelhu/.dotfiles/pandoc/themes/kinan/gt-house.R")   # gt_house()
 register_exhibit <- function(id, tier = c("suppl", "main", "ref"), kind = c("figure", "table"), caption = "") {
   tier <- match.arg(tier); kind <- match.arg(kind)
   ids <- vapply(.exhibit_reg$items, function(e) e$id, character(1))
-  if (id %in% ids) return(invisible())                       # idempotent: register once per id
+  if (id %in% ids) {                                         # idempotent on POSITION: first registration fixes
+    i <- which(ids == id)[1]                                 # the number, so re-registering never renumbers.
+    if (nzchar(caption)) .exhibit_reg$items[[i]]$caption <- caption   # but a later real call fills the caption in,
+    return(invisible())                                      # which is what makes declare_exhibits() below usable
+  }                                                          # without blanking the index.
   .exhibit_reg$items[[length(.exhibit_reg$items) + 1L]] <- list(id = id, tier = tier, kind = kind, caption = caption)
   invisible()
+}
+# Fix the numbering of a document's exhibits UP FRONT, in the order they will appear. Rendering is single
+# pass, so exhibit_label() can otherwise only resolve a reference to an exhibit already shown; declaring the
+# order lets prose cite an exhibit that appears later. Caption text still comes from the show_table()/
+# fig_legend() call itself, so nothing is typed twice.
+declare_exhibits <- function(..., tier = "suppl") {
+  for (spec in list(...)) register_exhibit(spec[[1]], tier, spec[[2]], "")
+  invisible()
+}
+# Every exhibit rendered must have been declared, and every declared one must be rendered. Without this the
+# two lists drift silently and a forward reference points at the wrong number — the exact failure the
+# declaration is meant to remove. Call after the last exhibit.
+check_exhibits_declared <- function(declared) {
+  shown <- vapply(.exhibit_reg$items, function(e) e$id, character(1))
+  extra <- setdiff(shown, declared); missing <- setdiff(declared, shown)
+  fmt <- function(x) if (length(x)) paste(x, collapse = ", ") else "none"   # paste() on empty gives "", not NULL
+  if (length(extra) || length(missing))
+    stop(sprintf("exhibit declaration out of sync — rendered but undeclared: %s | declared but never rendered: %s",
+                 fmt(extra), fmt(missing)), call. = FALSE)
+  invisible(TRUE)
 }
 exhibit_label <- function(id) {                              # resolved "Figure N" / "Supplementary Table SN" (for a rare xref)
   items <- .exhibit_reg$items
@@ -264,14 +288,19 @@ house_df <- function(df, title = NULL, note = NULL, label = NULL, landscape = FA
 # HTML, inline raw LaTeX for PDF). The leading blank line is REQUIRED: without it pandoc folds the fence /
 # raw block into the preceding figure's paragraph (the two chunks render with no blank line between them),
 # which is why the div markup showed up literally. Use in an asis chunk: `fig_legend("F_x")`.
-fig_legend <- function(name, tier = "suppl") {
+fig_legend <- function(name, tier = "suppl", numbered = FALSE) {
   txt  <- fig_cap(name)
   m    <- regmatches(txt, regexec("^\\s*\\*\\*(.+?)\\*\\*\\s*(.*)$", txt))[[1]]
   has  <- length(m) == 3
   lead <- if (has) trimws(m[2]) else ""
   body <- if (has) trimws(m[3]) else txt
   register_exhibit(name, tier, "figure", sub("\\.$", "", lead))   # caption = the bold lead (index adds the number)
-  lead <- trimws(paste0(exhibit_type(tier, "figure"), ". ", lead))   # unnumbered inline type label, e.g. "Supplementary Figure. <title>"
+  # Mirrors show_table(): unnumbered inline type label by default ("Supplementary Figure. <title>"), with the
+  # number living in the index; numbered = TRUE resolves the registry number into the legend instead
+  # ("Supplementary Figure S2. <title>"), for a journal that wants it in the caption. register_exhibit()
+  # above must run first — exhibit_label() reads the registry this very call has just written to.
+  lab  <- if (numbered) exhibit_label(name) else exhibit_type(tier, "figure")
+  lead <- trimws(paste0(lab, ". ", lead))
   if (knitr::is_latex_output()) {
     ld <- if (nzchar(lead))   # \HeaderFont{} — the {} keeps the control word from eating the lead's first word
       paste0("`\\textcolor{AccentPrimary}{\\HeaderFont{}`{=latex}", lead, "`}`{=latex} ") else ""
