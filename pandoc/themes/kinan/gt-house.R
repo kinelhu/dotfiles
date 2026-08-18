@@ -48,8 +48,21 @@ gt_house <- function(g,
       table_body.border.bottom.color = accent,
       # flush teal zebra
       row.striping.include_table_body = TRUE,
-      row.striping.background_color  = accent_light
+      row.striping.background_color  = accent_light,
+      # Row-group headings. gt's default gives them a white background and their own
+      # rules, so a grouped table that renders in the LaTeX path as bolded spanning
+      # lines flowing with the zebra came out in HTML as white full-width bars
+      # interrupting it, and not bold. Borders off here; weight and tint below,
+      # because these options cover neither.
+      row_group.border.top.color     = "transparent",
+      row_group.border.bottom.color  = "transparent",
+      row_group.padding              = gt::px(4)
     ) |>
+    (\(g) tryCatch(
+      g |> gt::tab_style(
+        style = list(gt::cell_text(weight = "bold"), gt::cell_fill(color = accent_light)),
+        locations = gt::cells_row_groups()),
+      error = function(e) g))() |>
     # Monaspace Neon column headers (opt_table_font sets the body font globally;
     # this overrides just the header cells to echo the section-header treatment).
     gt::tab_style(

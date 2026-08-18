@@ -16,7 +16,19 @@
 # EXHIBIT machinery lives here.
 # -----------------------------------------------------------------------------
 
-source("/Users/kinelhu/.dotfiles/pandoc/themes/kinan/gt-house.R")   # gt_house(): house-style gt tables
+# gt_house(): house-style gt tables. Resolved RELATIVE to this file rather than by
+# absolute path, so a project that vendors these two files into its own assets/
+# directory works unchanged. The absolute form made the vendored copy unusable and
+# every project that copied it had to patch this line.
+local({
+  here <- tryCatch(dirname(normalizePath(sys.frame(1)$ofile, mustWork = TRUE)),
+                   error = function(e) NULL)
+  cand <- c(if (!is.null(here)) file.path(here, "gt-house.R"),
+            "~/.dotfiles/pandoc/themes/kinan/gt-house.R")
+  hit  <- Find(file.exists, path.expand(cand))
+  if (is.null(hit)) stop("gt-house.R not found beside report-helpers.R", call. = FALSE)
+  source(hit)
+})
 
 # ---- exhibit registry: dynamic numbering via a bottom INDEX (no inline numbers) --------------------
 # Exhibits are NOT numbered inline; each caption call silently registers (id, tier, kind, caption) in order of
@@ -24,6 +36,10 @@ source("/Users/kinelhu/.dotfiles/pandoc/themes/kinan/gt-house.R")   # gt_house()
 # (tier x kind) sequence, in registration order — so reordering the document reorders the numbers for free, and
 # nothing inline can drift. tier = "main" | "suppl"; kind = "figure" | "table" (kind is set by the caller).
 # The registry lives in the .Rmd session and is fresh each knit (this file is sourced once, in the setup chunk).
+# rlang/base provide this in recent versions; defined here so the file is
+# self-contained when vendored into a project that does not attach rlang.
+if (!exists("%||%")) `%||%` <- function(a, b) if (is.null(a)) b else a
+
 .exhibit_reg <- new.env(parent = emptyenv()); .exhibit_reg$items <- list()
 # tier: "main" (Figure N / Table N) | "suppl" (Supplementary Figure/Table SN) | "ref" (rendered for reference,
 # UNNUMBERED — it does not consume a main/suppl number and is listed apart in the index).
@@ -33,9 +49,11 @@ register_exhibit <- function(id, tier = c("suppl", "main", "ref"), kind = c("fig
   if (id %in% ids) {                                         # idempotent on POSITION: first registration fixes
     i <- which(ids == id)[1]                                 # the number, so re-registering never renumbers.
     if (nzchar(caption)) .exhibit_reg$items[[i]]$caption <- caption   # but a later real call fills the caption in,
+    if (nzchar(caption)) .exhibit_reg$items[[i]]$rendered <- TRUE     # and latches it as actually rendered,
     return(invisible())                                      # which is what makes declare_exhibits() below usable
   }                                                          # without blanking the index.
-  .exhibit_reg$items[[length(.exhibit_reg$items) + 1L]] <- list(id = id, tier = tier, kind = kind, caption = caption)
+  .exhibit_reg$items[[length(.exhibit_reg$items) + 1L]] <-
+    list(id = id, tier = tier, kind = kind, caption = caption, rendered = TRUE)
   invisible()
 }
 # Fix the numbering of a document's exhibits UP FRONT, in the order they will appear. Rendering is single
@@ -43,14 +61,24 @@ register_exhibit <- function(id, tier = c("suppl", "main", "ref"), kind = c("fig
 # order lets prose cite an exhibit that appears later. Caption text still comes from the show_table()/
 # fig_legend() call itself, so nothing is typed twice.
 declare_exhibits <- function(..., tier = "suppl") {
-  for (spec in list(...)) register_exhibit(spec[[1]], tier, spec[[2]], "")
+  for (spec in list(...)) {
+    register_exhibit(spec[[1]], tier, spec[[2]], "")
+    # Declaring is not rendering. Without this flag every declared exhibit is also
+    # in the registry as "shown", so setdiff(declared, shown) is always empty and
+    # the "declared but never rendered" arm of check_exhibits_declared() can never
+    # fire. Verified by declaring an exhibit and never rendering it: the guard
+    # passed silently. A real display call latches it back to TRUE.
+    i <- length(.exhibit_reg$items)
+    if (identical(.exhibit_reg$items[[i]]$id, spec[[1]])) .exhibit_reg$items[[i]]$rendered <- FALSE
+  }
   invisible()
 }
 # Every exhibit rendered must have been declared, and every declared one must be rendered. Without this the
 # two lists drift silently and a forward reference points at the wrong number — the exact failure the
 # declaration is meant to remove. Call after the last exhibit.
 check_exhibits_declared <- function(declared) {
-  shown <- vapply(.exhibit_reg$items, function(e) e$id, character(1))
+  shown <- vapply(Filter(function(e) isTRUE(e$rendered %||% TRUE), .exhibit_reg$items),
+                  function(e) e$id, character(1))
   extra <- setdiff(shown, declared); missing <- setdiff(declared, shown)
   fmt <- function(x) if (length(x)) paste(x, collapse = ", ") else "none"   # paste() on empty gives "", not NULL
   if (length(extra) || length(missing))
@@ -275,7 +303,14 @@ house_df <- function(df, title = NULL, note = NULL, label = NULL, landscape = FA
       out <- paste0("```{=latex}\n\\begin{landscape}\n```\n\n", out, "\n\n```{=latex}\n\\end{landscape}\n```\n")
     return(knitr::asis_output(out))
   }
+  # A cell whose entire content is **bold** renders bold in the LaTeX path (pandoc
+  # processes the markdown) and is detected and bolded explicitly in the docx path.
+  # gt received the raw string, so the SAME table came out bold in the PDF and with
+  # literal asterisks in the HTML. fmt_markdown on the affected columns only.
+  .md_cols <- names(df)[vapply(df, function(c)
+    any(grepl("^(\\*\\*|__).*\\1$", as.character(c))), logical(1))]
   g <- if (has_grp) gt::gt(df, groupname_col = group_col) else gt::gt(df)   # native spanning row groups in HTML
+  if (length(.md_cols)) g <- g |> gt::fmt_markdown(columns = gt::all_of(.md_cols))
   if (!is.null(note)) g <- g |> gt::tab_source_note(gt::md(note))
   g <- gt_house(g)
   if (is.null(title)) return(g)
@@ -325,6 +360,32 @@ read_footer <- function(name) {
 # file present in tab_dir — `<id>.rds` (a gtsummary object) else `<id>.csv` (a plain data frame). Registers for the
 # bottom index (kind = "table") and renders with NO inline number. gtsummary (T1): HTML renders the native object
 # (bold labels, indented levels, BLANK not "NA" cells); PDF flattens to a tibble for the house pipe-table route.
+# gtsummary holds indentation as STYLING METADATA (table_styling$indent), not as
+# text: as_gt() applies it, as_tibble() returns the labels flush left. show_table()
+# sends HTML through as_gt() and LaTeX/docx through as_tibble(), so a Table 1 came
+# out with its factor levels indented under their variable in the HTML and flush
+# left in the PDF, where every level read as a variable in its own right.
+#
+# Re-applied as NON-BREAKING spaces, because pandoc collapses runs of ordinary
+# whitespace on the way to LaTeX. n_spaces is read per row rather than assumed, so
+# a table with several indent levels keeps all of them.
+gts_as_tibble_indented <- function(x, unit = "\u00a0") {
+  df <- gtsummary::as_tibble(x)
+  ind <- x$table_styling$indent
+  if (is.null(ind) || !nrow(ind)) return(df)
+  lab <- names(df)[1]                       # as_tibble renames label to its header
+  for (k in seq_len(nrow(ind))) {
+    n <- ind$n_spaces[k]
+    if (is.na(n) || n <= 0) next
+    hit <- tryCatch(rlang::eval_tidy(ind$rows[[k]], data = x$table_body), error = function(e) NULL)
+    if (is.null(hit)) next
+    hit <- rep_len(as.logical(hit), nrow(df))
+    hit[is.na(hit)] <- FALSE
+    df[[lab]][hit] <- paste0(strrep(unit, n), df[[lab]][hit])
+  }
+  df
+}
+
 show_table <- function(id, title = NULL, note = NULL, tier = "suppl", landscape = NULL, col_widths = NULL,
                        group_col = NULL, numbered = FALSE) {
   base <- sub("\\.(csv|rds)$", "", id)
@@ -344,7 +405,7 @@ show_table <- function(id, title = NULL, note = NULL, tier = "suppl", landscape 
     x <- readRDS(rds)
     # docx joins the LaTeX branch: as_gt() below yields raw HTML, which the docx writer drops (see house_df).
     if (knitr::is_latex_output() || isTRUE(knitr::pandoc_to("docx")))
-      return(house_df(gtsummary::as_tibble(x), disp, note, NULL, landscape, col_widths))
+      return(house_df(gts_as_tibble_indented(x), disp, note, NULL, landscape, col_widths))
     g <- gtsummary::as_gt(x)
     if (!is.null(note)) g <- g |> gt::tab_source_note(gt::md(note))
     g <- gt_house(g)

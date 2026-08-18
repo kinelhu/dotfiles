@@ -448,7 +448,16 @@ $endif$
 % =============================================================================
 
 % House style: fonts (Inter + Monaspace Xenon headers), palette, table style.
-\input{/Users/kinelhu/.dotfiles/pandoc/templates/house-style.tex}
+% house-style.tex is found on TeX's own input path rather than by absolute path, so
+% a project that vendors this template beside its own copy of house-style.tex works
+% unchanged. Rendering from ~/.dotfiles still resolves because the two files sit in
+% the same directory; a vendored pair resolves the same way. The absolute form made
+% every vendored copy patch this line.
+\makeatletter
+\IfFileExists{house-style.tex}
+  {\input{house-style.tex}}
+  {\input{\string~/.dotfiles/pandoc/templates/house-style.tex}}
+\makeatother
 
 \begin{document}
 
