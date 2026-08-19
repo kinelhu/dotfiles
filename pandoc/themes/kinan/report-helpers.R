@@ -137,6 +137,24 @@ NUMRE <- "^[-0-9.,%()\\[\\]<>=\u2265\u2264 /+\u2013]+$"
   v <- as.character(c); v <- v[!is.na(v) & nzchar(v)]
   length(v) > 0 && all(grepl(NUMRE, v, perl = TRUE)) }, logical(1))
 
+# ALIGNMENT IS A DIFFERENT QUESTION FROM BREAKABILITY, and conflating them was a bug.
+# NUMRE deliberately admits composites -- "23 (46%)", "56 [49-63]" -- because those
+# must not be broken across lines. Using the same test to choose alignment right-aligns
+# them, which aligns the closing bracket rather than the digits and gains nothing, and
+# it right-aligns the HEADER above them, which is where it shows: "All (N = 50)" set
+# flush right and wrapped mid-parenthesis.
+#
+# It also made the two LaTeX routes disagree. A table WITHOUT col_widths goes through
+# knitr::kable(format = "pipe"), which is flush left; one WITH col_widths comes here
+# and came out flush right. The same table, two alignments, decided by an argument
+# about width. The house reference (clad-reporting-audit, circulated v1) is flush left.
+#
+# So: right-align only what is actually a number.
+ALIGNRE <- "^[-+]?[0-9][0-9.,\u00a0 ]*$"
+.right_cols <- function(df) vapply(df, function(c) {
+  v <- as.character(c); v <- v[!is.na(v) & nzchar(v)]
+  length(v) > 0 && all(grepl(ALIGNRE, v, perl = TRUE)) }, logical(1))
+
 # Recommended relative column weights, derived from the table's own content, so a caller never has to
 # guess-render-correct. Numeric columns cannot break, so they claim their longest cell outright; text
 # wraps, so it claims a fraction of its longest cell, floored by its longest unbreakable word (a header
@@ -194,7 +212,8 @@ tex_tblr <- function(df, widths) {
     # break after the slash instead of demanding the width.
     gsub("/", "/\\\\allowbreak{}", x, fixed = FALSE)
   }
-  colspec <- paste0(sprintf("X[%s,%s]", format(widths, trim = TRUE), ifelse(num, "r", "l")), collapse = "")
+  colspec <- paste0(sprintf("X[%s,%s]", format(widths, trim = TRUE),
+                            ifelse(.right_cols(df), "r", "l")), collapse = "")
   # Cells arrive with markdown bold from two sources: **Group** section rows inserted by house_df, and
   # gtsummary's **header** / __label__ markup. Applied AFTER latex_escape, so `_` is already `\_`; without
   # it the markers print literally, which is what kept gtsummary tables off this path entirely.
