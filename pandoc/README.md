@@ -547,6 +547,34 @@ should look like a standard R vignette, not carry personal branding.
 
 ---
 
+## Citations and bibliographies
+
+Citeproc places the reference list **where it finds `<div id="refs"></div>`**. With no such div it does
+not omit the bibliography, it appends it to the very end of the document, after appendices, indices or
+whatever happens to be last. A document that gains its *first* citation therefore sprouts an unheaded
+reference list in an arbitrary place, and nothing in the render warns you.
+
+Always write the heading and the div explicitly:
+
+```markdown
+## References
+
+<div id="refs"></div>
+```
+
+If a document later loses its last citation, remove the heading too, or it renders as a heading with
+nothing under it.
+
+Seen 2026-08-31: a supplementary-materials document acquired its first four citations and shipped one
+build with the bibliography sitting below the PRISMA checklist and the display-item index.
+
+**Cite keys come from Zotero Better BibTeX, not from any key-generating script you write.** BBT strips
+hyphens inside a word (`antibody-mediated` → `antibodymediated`) and skips a leading `De`, so a naive
+`firstauthorYEARfirstword` generator produces different keys for the same paper. If a project generates
+a `.bib` alongside the BBT export, pin the divergent keys or the two silently stop matching.
+
+---
+
 ## Lua filters
 
 ### `beamer-blocks.lua`
