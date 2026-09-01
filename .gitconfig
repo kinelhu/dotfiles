@@ -1,3 +1,17 @@
 [user]
 	name = Kinan El Husseini
 	email = kinelhu@gmail.com
+	signingkey = /Users/kinelhu/.ssh/id_ed25519.pub
+[diff]
+	tool = vscode
+[difftool "vscode"]
+	cmd = code --wait --diff \"$LOCAL\" \"$REMOTE\"
+[difftool]
+	prompt = false
+[gpg]
+	program = /opt/homebrew/bin/gpg
+	format = ssh
+[commit]
+	gpgsign = true
+[gpg "ssh"]
+	allowedSignersFile = /Users/kinelhu/.ssh/allowed_signers
