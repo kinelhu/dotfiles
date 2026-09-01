@@ -241,6 +241,68 @@ $endif$
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0.5pt}
 \renewcommand{\footrule}{\hbox to\headwidth{\color{BorderLight}\leaders\hrule height \footrulewidth\hfill}}
+
+% -----------------------------------------------------------------------------
+% HEADER. Same override/hide grammar as the footer below, so the two halves of the
+% page furniture are configured the same way. All three slots are EMPTY by default:
+% the header was empty before this existed and no document should change without
+% asking. `running-section: true` is the convenience case — the current section
+% name, which is the only header content that earns its space in a long report
+% (the document's identity is already in the footer, on every page).
+% -----------------------------------------------------------------------------
+$if(running-section)$
+% The running name comes from \sectionmark, which receives the section title, but is
+% held in a private macro rather than read back through \leftmark.
+%
+% Why the filter below: tables here render as tabularray `longtabs`, and its
+% continuation caption also drives \sectionmark. Without the guard a mark-based header
+% sticks on "(Continued)" for every page a long table spans, which in a stats report is
+% most of them. Rejecting any title containing "Continued" is crude, but it is the only
+% signal available: nothing else distinguishes tabularray's call from a real section's.
+% A section legitimately named "... Continued" would be skipped; that is acceptable.
+%
+% titlesec's \titleformat before-code was tried first and is not usable here — #1 is
+% only bound in shapes that typeset the title themselves, not in the default `hang`.
+%
+% Cost: the value is read at shipout, so a section beginning mid-page names that
+% section on the page where it starts.
+\usepackage{xstring}
+\newcommand{\gRunningSection}{}
+\renewcommand{\sectionmark}[1]{\IfSubStr{#1}{Continued}{}{\gdef\gRunningSection{#1}}}
+% fancyhdr warns and misplaces the rule if \headheight is left at the article default
+% of 12pt once anything is actually IN the header. Set once, here, rather than leaving
+% every document to answer the warning itself.
+\setlength{\headheight}{14pt}
+\addtolength{\topmargin}{-2pt}
+$endif$
+
+% \RunningFont is defined by house-style.tex, which is \input further down, AFTER
+% these lines. That is fine: \fancyhead stores an unexpanded token list and only
+% expands it at shipout, by which time the font exists.
+$if(header-hide-left)$
+$else$
+$if(header-left)$
+\fancyhead[L]{\color{TextSecondary}\RunningFont\small $header-left$}
+$endif$
+$endif$
+
+$if(header-hide-center)$
+$else$
+$if(header-center)$
+\fancyhead[C]{\color{TextSecondary}\RunningFont\small $header-center$}
+$endif$
+$endif$
+
+$if(header-hide-right)$
+$else$
+$if(header-right)$
+\fancyhead[R]{\color{TextSecondary}\RunningFont\small $header-right$}
+$else$
+$if(running-section)$
+\fancyhead[R]{\color{TextSecondary}\RunningFont\small\nouppercase{\gRunningSection}}
+$endif$
+$endif$
+$endif$
 % Left: footer-hide-left suppresses | footer-left overrides | default: version+date
 $if(footer-hide-left)$
 $else$
@@ -461,9 +523,57 @@ $endif$
 
 \begin{document}
 
+% -----------------------------------------------------------------------------
+% TITLE. Two mutually exclusive routes.
+%
+%   titlepage: true   a dedicated cover page, no page furniture, then \clearpage —
+%                     which is what puts the TOC on a page of its own. For long
+%                     reports where an inline title block crowds the contents.
+%   default           the original inline \maketitle. Unchanged, because most
+%                     documents using this template are short and a cover page on a
+%                     three-page note wastes a page.
+%
+% The cover deliberately does NOT repeat the version+date that the footer already
+% prints on every page — it states them once, here, and the footer is suppressed.
+% `provenance` is free text for whatever makes the render auditable: a commit SHA,
+% a cohort size, a data snapshot date. A PDF that names the commit it came from
+% cannot misrepresent its own age, which is the failure this is here to prevent.
+% -----------------------------------------------------------------------------
 $if(title)$
+$if(titlepage)$
+\begin{titlepage}
+\thispagestyle{empty}
+\vspace*{\stretch{1}}
+\raggedright
+{\color{AccentPrimary}\fontsize{34}{40}\selectfont\bfseries $title$\par}
+$if(subtitle)$
+\vspace{1.2em}
+{\color{TextSecondary}\LARGE $subtitle$\par}
+$endif$
+\vspace{1.8em}
+{\color{AccentPrimary}\rule{0.28\textwidth}{1.2pt}\par}
+\vspace{1.8em}
+$if(author)$
+{\color{TextPrimary}\large $for(author)$$author$$sep$\\$endfor$\par}
+$endif$
+$if(version)$
+\vspace{0.5em}
+{\color{TextSecondary}\large $if(document-type)$$document-type$, $endif$version $version$\par}
+$endif$
+$if(date)$
+\vspace{0.35em}
+{\color{TextSecondary}\large $date$\par}
+$endif$
+\vspace*{\stretch{2}}
+$if(provenance)$
+{\color{TextSecondary}\footnotesize\ttfamily $provenance$\par}
+$endif$
+\end{titlepage}
+\clearpage
+$else$
 \maketitle
 \thispagestyle{fancy}
+$endif$
 $endif$
 
 $if(toc-title)$

@@ -41,3 +41,15 @@
     {\newfontfamily\HeaderFont{Inter}[UprightFont={Inter SemiBold}]}%
     {\providecommand{\HeaderFont}{\bfseries}}%
 }
+% Running heads: the same family as the section titles, several weights lighter.
+% \HeaderFont is ExtraBold with negative tracking, tuned for \Large headings; at
+% \small in TextSecondary it reads as a heading that lost its formatting rather
+% than as page furniture. Light keeps the family echo while receding, and survives
+% a long section name — Neon is monospaced, so width is the binding constraint.
+\IfFontExistsTF{Monaspace Neon Light}{%
+  \newfontfamily\RunningFont{Monaspace Neon Light}%
+}{%
+  \IfFontExistsTF{Inter}%
+    {\newfontfamily\RunningFont{Inter}}%
+    {\providecommand{\RunningFont}{}}%
+}
