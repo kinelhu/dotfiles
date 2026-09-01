@@ -31,6 +31,12 @@
 
 % ── Fonts ────────────────────────────────────────────────────────────────────
 % Body: Inter if installed (else leave the document default untouched).
+% Known and deliberate: Inter's `calt` swaps brackets for cap-height `.case` variants
+% next to capitals and lining figures, so "(1.02-1.55)" renders with taller parens. Those
+% glyphs carry no Unicode mapping, so pdftotext and copy-paste drop the parentheses while
+% the page displays them correctly. RawFeature={-calt} would fix extraction at the cost of
+% the cap-height brackets (and of the arrow ligatures). NOT taken: the tables are the
+% copy-paste surface, not the prose, and the typography is worth more here (KEH, 2026-09-01).
 \IfFontExistsTF{Inter}{\setmainfont{Inter}}{}
 % Headers: Monaspace Neon ExtraBold (neo-grotesque mono) → else Inter SemiBold → else \bfseries.
 % Negative tracking tightens the wide monospaced glyphs at heading sizes.
