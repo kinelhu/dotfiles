@@ -1,1 +1,0 @@
-/Users/kinelhu/.dotfiles/pandoc/filters/table-header-font.lua

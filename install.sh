@@ -57,12 +57,26 @@ echo "🔗 Creating symlinks..."
 create_symlink "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
 create_symlink "$DOTFILES_DIR/.tmux.conf" "$HOME/.tmux.conf"
 create_symlink "$DOTFILES_DIR/.gitconfig" "$HOME/.gitconfig"
-create_symlink "$DOTFILES_DIR/pandoc/templates" "$HOME/.local/share/pandoc/templates"
-create_symlink "$DOTFILES_DIR/pandoc/defaults"  "$HOME/.local/share/pandoc/defaults"
-create_symlink "$DOTFILES_DIR/pandoc/filters"   "$HOME/.local/share/pandoc/filters"
-create_symlink "$DOTFILES_DIR/pandoc/themes"    "$HOME/.local/share/pandoc/themes"
-create_symlink "$DOTFILES_DIR/pandoc/make-reference-doc.py" "$HOME/.local/share/pandoc/make-reference-doc.py"
-create_symlink "$DOTFILES_DIR/pandoc/reference.docx"        "$HOME/.local/share/pandoc/reference.docx"
+
+# Pandoc authoring machinery lives in the project-conventions repository, not here: it is
+# research output (how the papers look), not machine configuration. Clone it alongside:
+#   git clone git@github.com:kinelhu/project-conventions.git ~/Dev/project-conventions
+# Everything downstream reads ~/.local/share/pandoc/, so only these six lines know where
+# the source actually is — which is the point, and why moving it cost nine projects one
+# path edit each rather than a rewrite.
+CONVENTIONS_DIR="${CONVENTIONS_DIR:-$HOME/Dev/project-conventions}"
+if [ -d "$CONVENTIONS_DIR/pandoc" ]; then
+    create_symlink "$CONVENTIONS_DIR/pandoc/templates" "$HOME/.local/share/pandoc/templates"
+    create_symlink "$CONVENTIONS_DIR/pandoc/defaults"  "$HOME/.local/share/pandoc/defaults"
+    create_symlink "$CONVENTIONS_DIR/pandoc/filters"   "$HOME/.local/share/pandoc/filters"
+    create_symlink "$CONVENTIONS_DIR/pandoc/themes"    "$HOME/.local/share/pandoc/themes"
+    create_symlink "$CONVENTIONS_DIR/pandoc/make-reference-doc.py" "$HOME/.local/share/pandoc/make-reference-doc.py"
+    create_symlink "$CONVENTIONS_DIR/pandoc/reference.docx"        "$HOME/.local/share/pandoc/reference.docx"
+else
+    echo -e "${YELLOW}⚠  No pandoc machinery linked: $CONVENTIONS_DIR/pandoc not found.${NC}"
+    echo -e "${YELLOW}   Clone project-conventions there, or set CONVENTIONS_DIR, then re-run.${NC}"
+    echo -e "${YELLOW}   Manuscript and report builds will fail until you do.${NC}"
+fi
 
 # Alfred preferences (macOS only)
 if [ -d "$HOME/Library/Application Support/Alfred" ]; then

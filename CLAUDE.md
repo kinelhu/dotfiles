@@ -33,7 +33,7 @@ This is a dotfiles repository for managing terminal configuration across multipl
 ├── iterm2/
 │   ├── com.googlecode.iterm2.plist  # Binary plist backup
 │   └── profile.plist                 # Readable plist export
-├── pandoc/                # Full pipeline: bare .md → PDF/docx, Quarto/.Rmd → PDF/HTML, slides
+├── (pandoc/ lives in project-conventions: authoring machinery, symlinked by install.sh)
 │   ├── README.md          # Syntax reference (Beamer, RevealJS, long-form reports)
 │   ├── defaults/          # pandoc --defaults YAML (article/book/docx/slides-kinan)
 │   ├── filters/           # Lua filters (table zebra/header-font, beamer blocks, etc.)
