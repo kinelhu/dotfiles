@@ -174,6 +174,14 @@ if command -v brew &> /dev/null; then
         brew bundle install --file="$DOTFILES_DIR/Brewfile"
         echo -e "${GREEN}✓ Homebrew packages installed${NC}"
     fi
+    # Pin R: a minor-version bump breaks the ABI of every compiled package
+    # (_SETLENGTH errors) and forces a full rebuild of site-library and every
+    # renv project. Pins are local Homebrew state that `brew bundle` cannot
+    # record, so re-apply here. Unpin deliberately with `brew unpin r`.
+    if brew list r &> /dev/null; then
+        brew pin r
+        echo -e "${GREEN}✓ R pinned (brew pin r)${NC}"
+    fi
 else
     echo -e "${YELLOW}Homebrew not found. Install it first:${NC}"
     echo '  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'

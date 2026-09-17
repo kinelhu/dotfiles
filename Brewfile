@@ -19,7 +19,7 @@ brew "pure"
 brew "pyenv"
 brew "python@3.12"
 brew "qt"
-brew "r"
+brew "r" # pinned by install.sh — minor-version bumps break the compiled-package ABI
 brew "tesseract"
 brew "tesseract-lang"
 brew "tmux"
