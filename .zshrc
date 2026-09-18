@@ -80,6 +80,11 @@ plugins=(git
 	zoxide)
 
 source $ZSH/oh-my-zsh.sh
+
+# Prefix the prompt with user@host only over SSH. Both Macs share this file
+# and the same username, so a local prompt stays bare and a remote one says
+# which machine you are on (2026-09-18, MacBook <-> MacStudio over Tailscale).
+[[ -n "$SSH_CONNECTION" ]] && PROMPT="%F{magenta}%n@%m%f ${PROMPT}"
 source <(fzf --zsh)
 
 # Setup Oh My Posh
@@ -258,7 +263,6 @@ mdhtml() {
 
 fpath+=("$(brew --prefix)/share/zsh/site-functions")
 
-ZSH_THEME="dracula"
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
