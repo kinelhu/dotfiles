@@ -1,0 +1,10 @@
+# Pin the Apple toolchain for R package compilation.
+#
+# Defensive: .zshrc now puts GNU binutils AFTER the system paths, so `ar` and
+# `ranlib` already resolve to /usr/bin. This keeps R correct anyway if anything
+# else (a conda env, a stray export) prepends binutils again — the failure is
+# obscure and expensive to diagnose: GNU ar produces archives Apple's ld rejects
+# with "invalid control bits", and GNU strip corrupts Mach-O shared objects
+# ("load command string extends beyond end of load command").
+AR = /usr/bin/ar
+RANLIB = /usr/bin/ranlib

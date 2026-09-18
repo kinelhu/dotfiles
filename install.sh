@@ -59,6 +59,8 @@ create_symlink "$DOTFILES_DIR/.zprofile" "$HOME/.zprofile"
 create_symlink "$DOTFILES_DIR/.zshenv" "$HOME/.zshenv"
 create_symlink "$DOTFILES_DIR/.tmux.conf" "$HOME/.tmux.conf"
 create_symlink "$DOTFILES_DIR/.gitconfig" "$HOME/.gitconfig"
+create_symlink "$DOTFILES_DIR/.condarc" "$HOME/.condarc"
+create_symlink "$DOTFILES_DIR/R/Makevars" "$HOME/.R/Makevars"
 
 # Pandoc authoring machinery lives in the project-conventions repository, not here: it is
 # research output (how the papers look), not machine configuration. Clone it alongside:
@@ -171,11 +173,6 @@ fi
 echo ""
 echo "🍺 Homebrew packages..."
 if command -v brew &> /dev/null; then
-    if [ -f "$DOTFILES_DIR/Brewfile" ]; then
-        echo "Installing packages from Brewfile (this may take a while)..."
-        brew bundle install --file="$DOTFILES_DIR/Brewfile"
-        echo -e "${GREEN}✓ Homebrew packages installed${NC}"
-    fi
     # Pin R: a minor-version bump breaks the ABI of every compiled package
     # (_SETLENGTH errors) and forces a full rebuild of site-library and every
     # renv project. Pins are local Homebrew state that `brew bundle` cannot
@@ -183,6 +180,11 @@ if command -v brew &> /dev/null; then
     if brew list r &> /dev/null; then
         brew pin r
         echo -e "${GREEN}✓ R pinned (brew pin r)${NC}"
+    fi
+    if [ -f "$DOTFILES_DIR/Brewfile" ]; then
+        echo "Installing packages from Brewfile (this may take a while)..."
+        brew bundle install --file="$DOTFILES_DIR/Brewfile"
+        echo -e "${GREEN}✓ Homebrew packages installed${NC}"
     fi
 else
     echo -e "${YELLOW}Homebrew not found. Install it first:${NC}"
