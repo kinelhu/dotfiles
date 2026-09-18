@@ -1,12 +1,17 @@
 {
     "files.associations": {
-        "renv.lock": "json"
+        "renv.lock": "json",
+        // The Quarto extension declares ".rmd" in lower case. Map the capital-R form explicitly
+        // rather than depend on how the editor normalises case: if this is wrong the language is
+        // Plain Text and every "[quarto]" block below is silently inert. Status bar, bottom right,
+        // should read Quarto.
+        "*.Rmd": "quarto"
     },
 
     "rstudio.keymap.enable": true,
     "workbench.keybindings.rstudioKeybindings": true,
 
-    "editor.fontFamily": "'Monaspace Xenon'",
+    "editor.fontFamily": "'Monaspace Neon'",
     "editor.fontSize": 13.5,
     "editor.fontLigatures": "'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08', 'calt', 'dlig', 'liga'",
 
@@ -81,7 +86,9 @@
     },
 
     // Wrap at 80 columns with the "Rewrap" extension
-    "rewrap.wrappingColumn": 80,
+    // 100, matching editor.wordWrapColumn and the second ruler. At 80 every deliberate reflow moved
+    // prose to a width nothing else was set to.
+    "rewrap.wrappingColumn": 100,
 
     // Hacky "Open Remote - SSH" settings
     //"remote.SSH.serverDownloadUrlTemplate": "https://github.com/gitpod-io/openvscode-server/releases/download/openvscode-server-v${version}/openvscode-server-v${version}-${os}-${arch}.tar.gz",
@@ -112,7 +119,9 @@
     "editor.lineHeight": 1.5,
     "[markdown]": {
         "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
-        "editor.wordWrap": "on"
+        // "bounded", not "on". "on" wraps at the viewport, so on a wide window a line runs to
+        // whatever the monitor allows and the rulers become decorative.
+        "editor.wordWrap": "bounded"
     },
     "workbench.editor.enablePreview": false,
     "markdown.extension.tableFormatter.enabled": false,
@@ -120,5 +129,7 @@
     "[quarto]": {
         "editor.wordWrap": "bounded"
     },
-    "editor.wordWrapColumn": 90
+    // 100, matching the second ruler. Prose in the manuscripts is written one sentence per line and
+    // displayed against this; 90 sat between the two rulers and matched neither.
+    "editor.wordWrapColumn": 100
 }
