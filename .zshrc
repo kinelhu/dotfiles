@@ -1,5 +1,5 @@
 # If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -110,7 +110,8 @@ source <(fzf --zsh)
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-export PATH="/opt/homebrew/opt/binutils/bin:$PATH"
+# binutils appended (not prepended) so Apple's ar/ranlib/ld/nm win — GNU-only tools (objdump/readelf) still reachable
+export PATH="$PATH:/opt/homebrew/opt/binutils/bin"
 
 eval "$(zoxide init zsh)"
 
@@ -256,23 +257,18 @@ fpath+=("$(brew --prefix)/share/zsh/site-functions")
 
 ZSH_THEME="dracula"
 
-# Two conda installs
-# Quick switch for ARM64 Miniforge
-alias load_native='export PATH="/Users/kinelhu/miniforge_native/bin:$PATH"; conda init zsh; source ~/.zshrc'
-
-# Quick switch for Intel Miniforge (replace with your actual path)
-alias load_intel='export PATH="/opt/miniconda3/bin:$PATH"; conda init zsh; source ~/.zshrc'
-
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/opt/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+# Native arm64 miniforge only (Intel /opt/miniconda3 retired 2026-07-17).
+# base does NOT auto-activate (~/.condarc auto_activate: false) — run `conda activate <env>` when needed.
+__conda_setup="$('/Users/kinelhu/miniforge_native/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "/opt/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "/opt/miniconda3/etc/profile.d/conda.sh"
+    if [ -f "/Users/kinelhu/miniforge_native/etc/profile.d/conda.sh" ]; then
+        . "/Users/kinelhu/miniforge_native/etc/profile.d/conda.sh"
     else
-        export PATH="/opt/miniconda3/bin:$PATH"
+        export PATH="/Users/kinelhu/miniforge_native/bin:$PATH"
     fi
 fi
 unset __conda_setup
@@ -285,13 +281,8 @@ ZSH_AUTOSUGGEST_HISTORY_IGNORE="export *"
 export PATH="$PATH:/Users/kinelhu/.lmstudio/bin"
 # End of LM Studio CLI section
 
-
 # bun completions
 [ -s "/Users/kinelhu/.bun/_bun" ] && source "/Users/kinelhu/.bun/_bun"
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
@@ -329,6 +320,6 @@ mdtoc() {
   echo "TOC written to: $output"
 }
 
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
+# Chrome for Testing — decktape
+export PUPPETEER_EXECUTABLE_PATH="$(find $HOME/.cache/puppeteer/chrome -name \"Google Chrome for Testing\" -type f 2>/dev/null | head -1)"
+alias decktape='npx decktape --chrome-path "$PUPPETEER_EXECUTABLE_PATH"'

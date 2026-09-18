@@ -228,12 +228,18 @@ The setup requires:
 - git
 - Optional: fzf, zoxide, tmux (warned about by script)
 
-### Conda Integration
-The `.zshrc` includes conda initialization. The conda paths are:
-- `/opt/anaconda3` (primary)
-- `/Users/kinelhu/miniconda3` (fallback)
-
-If conda is installed elsewhere on a new machine, update the paths in `.zshrc`.
+### Python and conda
+- Standard Python tool is `uv` (Homebrew, native arm64): per-project `.venv`, `uv sync` / `uv run`.
+  Nothing is installed into a global or base environment.
+- conda is native arm64 miniforge only, at `~/miniforge_native`, for projects that need conda's
+  binary ecosystem (medical imaging: torch / SimpleITK / TotalSegmentator). The `.zshrc` conda
+  block points there. base does not auto-activate (`~/.condarc`: `auto_activate: false`); an
+  active base put conda's toolchain ahead of Homebrew and broke source builds (`sf`, `terra`).
+- The Intel x86_64 `/opt/miniconda3`, `/opt/anaconda3` and pyenv are retired (2026-07-17).
+  Do not recreate them on a new machine.
+- On a new machine: `brew install uv`, install miniforge (arm64) to `~/miniforge_native`, write
+  `~/.condarc` with `auto_activate: false`. If miniforge lands elsewhere, update the conda block
+  in `.zshrc`.
 
 ## Troubleshooting
 

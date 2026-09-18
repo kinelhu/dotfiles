@@ -6,7 +6,7 @@ My personal configuration for macOS — terminal, editors, apps, and packages.
 
 | App / Tool | What's stored | How |
 |---|---|---|
-| **zsh** | `.zshrc` | Symlink |
+| **zsh** | `.zshrc`, `.zprofile`, `.zshenv` | Symlink |
 | **tmux** | `.tmux.conf` | Symlink |
 | **git** | `.gitconfig` | Symlink |
 | **iTerm2** | Preferences plist + profile | Copied on sync |

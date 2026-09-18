@@ -55,6 +55,8 @@ echo -e "${GREEN}✓ Submodules initialized${NC}"
 # Create symlinks for config files
 echo "🔗 Creating symlinks..."
 create_symlink "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
+create_symlink "$DOTFILES_DIR/.zprofile" "$HOME/.zprofile"
+create_symlink "$DOTFILES_DIR/.zshenv" "$HOME/.zshenv"
 create_symlink "$DOTFILES_DIR/.tmux.conf" "$HOME/.tmux.conf"
 create_symlink "$DOTFILES_DIR/.gitconfig" "$HOME/.gitconfig"
 
